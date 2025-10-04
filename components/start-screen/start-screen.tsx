@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Earth3D } from "@/components/earth-3d"
 
@@ -10,6 +10,7 @@ export function StartScreen() {
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [earthLoaded, setEarthLoaded] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     // Generate random stars
@@ -30,6 +31,21 @@ export function StartScreen() {
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    // Play music when loading finishes
+    if (!isLoading && audioRef.current) {
+      const audio = audioRef.current
+      // Configurar el tiempo de inicio en 10 segundos
+      audio.currentTime = 10
+      // Configurar el volumen (0.0 a 1.0)
+      audio.volume = 0.7
+      
+      audio.play().catch(error => {
+        console.log("Audio playback failed:", error)
+      })
+    }
+  }, [isLoading])
+
   const handleEarthLoaded = () => {
     setEarthLoaded(true)
   }
@@ -40,6 +56,14 @@ export function StartScreen() {
 
   return (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
+      {/* Background Music */}
+      <audio
+        ref={audioRef}
+        src="/music/deep-sea.wav"
+        loop
+        preload="auto"
+      />
+
       <div className="absolute inset-0">
         {stars.map((star) => (
           <div
@@ -66,19 +90,13 @@ export function StartScreen() {
         </div>
       )}
 
-      {/* Pre-mount Earth (hidden) to preload */}
-      <div className={isLoading ? "opacity-0 pointer-events-none absolute" : "hidden"}>
-        <Earth3D onLoaded={handleEarthLoaded} />
-      </div>
-      
       {/* Content */}
       {!isLoading && (
         <div className="flex flex-row animate-fade-in-content">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center -ml-300">
             <Earth3D onLoaded={handleEarthLoaded} />
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center px-4 gap-2">
-          {/* Title */}
+        <div className="relative z-10 flex flex-col items-center justify-center px-4 gap-2 ml-32">
           <div className="text-center space-y-2">
             <h1 className="text-6xl font-bold text-white tracking-wider">
               BEYOND EARTH

@@ -38,15 +38,15 @@ function Earth({ onLoaded }: EarthProps) {
 
 export function Earth3D({ onLoaded }: { onLoaded?: () => void }) {
   return (
-    <div className="w-[450px] h-[450px]">
+    <div className="w-[1500px] h-[1500px]">
       <Canvas
         camera={{ position: [0, 0, 7], fov: 50 }}
         style={{ background: "transparent" }}
         gl={{ antialias: true, alpha: true }}
       >
         {/* Lighting */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[5, 3, 5]} intensity={1.8} />
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[5, 3, 5]} intensity={1.5} />
         <pointLight position={[-5, -3, -5]} intensity={0.6} color="#4299e1" />
 
         {/* Earth with Suspense - no loading screen */}

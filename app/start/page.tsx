@@ -25,7 +25,6 @@ export default function StartPage() {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
     } else {
-      // Si es el primer paso, volver al inicio
       router.push("/")
     }
   }
@@ -97,7 +96,7 @@ export default function StartPage() {
         </Button>
       </div>
 
-      {/* Secuencia de pasos */}
+      {/* Secuencia de pasos , aqui vamos a poner las animaciones, estan en proceso*/}
         <div className="text-white text-xl font-bold absolute bottom-8 left-1/2 transform -translate-x-1/2">
           Paso {currentStep + 1} de {STEPS.length}
         </div>

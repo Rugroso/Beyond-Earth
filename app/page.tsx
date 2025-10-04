@@ -1,6 +1,5 @@
 import { EditableCanvas } from "@/components/editable-canvas/editable-canvas"
 import { Toolbar } from "@/components/toolbar/toolbar"
-import { ElementPalette } from "@/components/element-palette"
 
 export default function Home() {
   return (
@@ -21,8 +20,6 @@ export default function Home() {
           <Toolbar />
         </div>
 
-        {/* Element Palette Sidebar */}
-        <ElementPalette />
       </div>
     </div>
   )

@@ -42,20 +42,18 @@ export default function GamePage() {
       <div className="absolute inset-0 bg-gradient-radial from-purple-900/10 via-transparent to-transparent opacity-50 pointer-events-none"></div>
 
       {/* Navigation Bar */}
-      <header className="relative z-10 border-b border-white/10 bg-slate-900/50 backdrop-blur-sm px-6 py-4">
+      <header className="relative z-10 flex-shrink-0 border-b border-white/10 bg-slate-900/50 backdrop-blur-sm px-6 py-4">
         <h1 className="text-lg font-medium text-white">Edit Screen</h1>
       </header>
 
-      {/* Main Content Area */}
-      <div className="relative z-10 flex flex-1 overflow-hidden">
-        {/* Canvas Area */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            <EditableCanvas />
-          </div>
-          {/* Toolbar */}
-          <Toolbar />
-        </div>
+      {/* Main Content Area - Canvas takes all available space */}
+      <div className="relative z-10 flex-1 min-h-0">
+        <EditableCanvas />
+      </div>
+
+      {/* Toolbar at bottom - fixed height, responsive */}
+      <div className="relative z-10 flex-shrink-0">
+        <Toolbar />
       </div>
 
       <style jsx>{`

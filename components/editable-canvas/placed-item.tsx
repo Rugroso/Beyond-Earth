@@ -18,9 +18,15 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
   const { shape } = itemDefinition
 
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData("instanceId", item.instanceId)
+  }
+
   return (
     <div
-      className="absolute"
+      className="absolute cursor-move"
+      draggable={true}
+      onDragStart={handleDragStart}
       style={{
         left: `${item.position.x}px`,
         top: `${item.position.y}px`,

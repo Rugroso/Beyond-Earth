@@ -39,10 +39,24 @@ export function useEditorState() {
     [availableItems, getItemCountOnCanvas],
   )
 
+  const updateItemPosition = useCallback(
+    (instanceId: string, newPosition: { x: number; y: number }) => {
+      setPlacedItems((prev) =>
+        prev.map((item) =>
+          item.instanceId === instanceId
+            ? { ...item, position: newPosition }
+            : item
+        )
+      )
+    },
+    []
+  )
+
   return {
     availableItems,
     placedItems,
     addItemToCanvas,
     getItemCountOnCanvas,
+    updateItemPosition,
   }
 }

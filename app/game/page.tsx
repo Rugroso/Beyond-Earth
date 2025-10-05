@@ -5,10 +5,15 @@ import { EditableCanvas } from "@/components/editable-canvas/editable-canvas"
 import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
-import { Edit3, Eye } from "lucide-react"
+import { Edit3, Eye, Download, Loader2 } from "lucide-react"
+import { useCanvasCapture } from "@/hooks/use-canvas-capture"
+import { useToast } from "@/hooks/use-toast"
 
 export default function GamePage() {
   const context = useContext(EditorContext)
+  const { downloadAsImage } = useCanvasCapture()
+  const { toast } = useToast()
+  const [isExporting, setIsExporting] = useState(false)
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
 
   useEffect(() => {
@@ -26,6 +31,25 @@ export default function GamePage() {
   if (!context) return null
 
   const { isEditMode, setIsEditMode } = context
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      await downloadAsImage()
+      toast({
+        title: "Success!",
+        description: "Your design has been exported as PNG.",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export image. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   return (
     <div className="relative flex h-screen flex-col bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
@@ -55,24 +79,40 @@ export default function GamePage() {
           <h1 className="text-lg font-medium text-white">
             {isEditMode ? "Editing" : "Preview"}
           </h1>
-          <Button
-            variant={isEditMode ? "default" : "secondary"}
-            size="sm"
-            onClick={() => setIsEditMode(!isEditMode)}
-            className="gap-2"
-          >
-            {isEditMode ? (
-              <>
-                <Eye className="h-4 w-4" />
-                Preview
-              </>
-            ) : (
-              <>
-                <Edit3 className="h-4 w-4" />
-                Edit
-              </>
-            )}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={isExporting}
+              className="gap-2"
+            >
+              {isExporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Export
+            </Button>
+            <Button
+              variant={isEditMode ? "default" : "secondary"}
+              size="sm"
+              onClick={() => setIsEditMode(!isEditMode)}
+              className="gap-2"
+            >
+              {isEditMode ? (
+                <>
+                  <Eye className="h-4 w-4" />
+                  Preview
+                </>
+              ) : (
+                <>
+                  <Edit3 className="h-4 w-4" />
+                  Edit
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </header>
 

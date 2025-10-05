@@ -33,7 +33,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
   const handleDragStart = (e: React.MouseEvent) => {
     if (!isEditMode || isResizing) return
-    
+
     // Don't start dragging if clicking on buttons or resize handle
     const target = e.target as HTMLElement
     if (target.closest('button') || target.closest('[data-resize-handle]')) {

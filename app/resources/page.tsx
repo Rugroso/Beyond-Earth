@@ -83,10 +83,10 @@ export default function ResourcesPage() {
   const resources: Resource[] = [
     {
       id: "1",
-      title: "NASA Space Habitat Design Guidelines",
-      description: "Official NASA guide on space habitat design",
+      title: "Information on understanding volumetric requirements for crews in space habitats.",
+      description: "C. Stromgren, C. Burke, J. Cho, R. Calderon, M. Rucker",
       type: "document",
-      url: "https://www.nasa.gov/",
+      url: "https://ntrs.nasa.gov/api/citations/20200002973/downloads/20200002973.pdf",
       category: "Documentation"
     },
     {

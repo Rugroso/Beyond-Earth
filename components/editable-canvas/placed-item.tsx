@@ -13,27 +13,57 @@ interface PlacedItemProps {
 export function PlacedItem({ item }: PlacedItemProps) {
   const context = useContext(EditorContext)
   const [isResizing, setIsResizing] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const resizeStartRef = useRef<{ size: number; mouseX: number; mouseY: number } | null>(null)
-  
+
   if (!context) return null
 
-  const { availableItems, isEditMode, removeItemFromCanvas, updateItemSize } = context
+  const { availableItems, isEditMode, removeItemFromCanvas, updateItemPosition, updateItemSize } = context
   const itemDefinition = availableItems.find((i) => i.id === item.itemId)
   if (!itemDefinition) return null
 
   const { shape } = itemDefinition
 
-  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
-    if (!isEditMode || isResizing) {
-      event.preventDefault()
-      return
-    }
-    event.dataTransfer.setData("instanceId", item.instanceId)
-  }
-
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
     removeItemFromCanvas(item.instanceId)
+  }
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    if (!isEditMode || isResizing) return
+
+    e.stopPropagation()
+    setIsDragging(true)
+
+    // Get the canvas element (parent container)
+    const canvas = document.querySelector('[data-canvas="true"]')
+    if (!canvas) return
+
+    const canvasRect = canvas.getBoundingClientRect()
+
+    // Calculate offset from mouse to item's current position
+    const offsetX = e.clientX - canvasRect.left - item.position.x
+    const offsetY = e.clientY - canvasRect.top - item.position.y
+    setDragOffset({ x: offsetX, y: offsetY })
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      // Calculate new position relative to canvas
+      const newX = moveEvent.clientX - canvasRect.left - offsetX
+      const newY = moveEvent.clientY - canvasRect.top - offsetY
+
+      // Update position
+      updateItemPosition(item.instanceId, { x: newX, y: newY })
+    }
+
+    const handleMouseUp = () => {
+      setIsDragging(false)
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+
+    document.addEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseup", handleMouseUp)
   }
 
   const handleResizeStart = (e: React.MouseEvent) => {
@@ -48,12 +78,12 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!resizeStartRef.current) return
-      
+
       const deltaX = moveEvent.clientX - resizeStartRef.current.mouseX
       const deltaY = moveEvent.clientY - resizeStartRef.current.mouseY
       const delta = (deltaX + deltaY) / 2 // Average of both axes for diagonal scaling
-      
-      const newSize = resizeStartRef.current.size + delta
+
+      const newSize = Math.max(40, resizeStartRef.current.size + delta) // Minimum size of 40px
       updateItemSize(item.instanceId, newSize)
     }
 
@@ -73,24 +103,24 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
   return (
     <div
-      className={`absolute transition-all ${isEditMode && !isResizing ? "cursor-move wiggle" : "cursor-default"}`}
-      draggable={isEditMode && !isResizing}
-      onDragStart={handleDragStart}
+      className={`absolute transition-all ${isEditMode && !isResizing ? (isDragging ? "cursor-grabbing scale-110 z-50" : "cursor-grab hover:scale-105") : "cursor-default"}`}
+      onMouseDown={isEditMode && !isResizing ? handleDragStart : undefined}
       style={{
         left: `${item.position.x}px`,
         top: `${item.position.y}px`,
         transform: "translate(-50%, -50%)",
+        transition: isDragging ? "none" : "all 0.2s ease",
       }}
     >
-      <div 
-        className="relative flex items-center justify-center bg-muted rounded-lg"
+      <div
+        className={`relative flex items-center justify-center rounded-lg ${isDragging ? "bg-muted/80 shadow-2xl ring-2 ring-primary" : "bg-muted"}`}
         style={{
           width: `${containerSize}px`,
           height: `${containerSize}px`,
         }}
       >
         {shape === "triangle" && (
-          <div 
+          <div
             style={{
               width: 0,
               height: 0,
@@ -101,7 +131,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
           />
         )}
         {shape === "square" && (
-          <div 
+          <div
             className="bg-foreground/60 rounded"
             style={{
               width: `${shapeSize}px`,
@@ -110,7 +140,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
           />
         )}
         {shape === "circle" && (
-          <div 
+          <div
             className="bg-foreground/60 rounded-full"
             style={{
               width: `${shapeSize}px`,
@@ -119,7 +149,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
           />
         )}
 
-        {isEditMode && (
+        {isEditMode && !isDragging && (
           <>
             {/* Delete button */}
             <Button

@@ -9,9 +9,9 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-003", name: "Componente C", shape: "triangle", limit: 2 }
 ];
 
-const DEFAULT_SIZE = 80;
+const DEFAULT_SIZE = 140;
 const MIN_SIZE = 50;
-const MAX_SIZE = 200;
+const MAX_SIZE = 400;
 
 export function useEditorState() {
   const [availableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
@@ -52,11 +52,7 @@ export function useEditorState() {
   const updateItemSize = useCallback((instanceId: string, newSize: number) => {
     // Clamp size between MIN_SIZE and MAX_SIZE
     const clampedSize = Math.max(MIN_SIZE, Math.min(MAX_SIZE, newSize));
-    setPlacedItems((prev) => 
-      prev.map((item) => 
-        item.instanceId === instanceId ? { ...item, size: clampedSize } : item
-      )
-    );
+    setPlacedItems((prev) => prev.map((item) => (item.instanceId === instanceId ? { ...item, size: clampedSize } : item)));
   }, []);
 
   const removeItemFromCanvas = useCallback((instanceId: string) => {

@@ -41,6 +41,7 @@ export function EditableCanvas() {
         {/* Content layer: fixed native dimensions with scale transform */}
         <div
           ref={contentRef}
+          data-canvas="true"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           className="relative bg-white shadow-2xl"

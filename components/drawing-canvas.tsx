@@ -85,8 +85,14 @@ export function DrawingCanvas({ onClose }: DrawingCanvasProps) {
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    
+    // Calculate the scale factor between the canvas internal size and displayed size
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    
+    // Get mouse position relative to canvas and scale it
+    const x = (e.clientX - rect.left) * scaleX
+    const y = (e.clientY - rect.top) * scaleY
 
     ctx.lineWidth = brushSize
     ctx.lineCap = "round"

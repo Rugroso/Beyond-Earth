@@ -34,7 +34,9 @@ export interface EditorContextType {
   placedItems: PlacedItemType[];
   selectedItemIds: Set<string>;
   isEditMode: boolean;
+  backgroundImage: string;
   setIsEditMode: (isEditMode: boolean) => void;
+  setBackgroundImage: (imagePath: string) => void;
   addItemToCanvas: (itemId: string, position: { x: number; y: number }) => void;
   getItemCountOnCanvas: (itemId: string) => number;
   updateItemPosition: (instanceId: string, newPosition: { x: number; y: number }) => void;

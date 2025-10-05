@@ -216,6 +216,7 @@ export function useEditorState() {
   const [placedItems, setPlacedItems] = useState<PlacedItemType[]>([]);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [isEditMode, setIsEditMode] = useState<boolean>(true);
+  const [backgroundImage, setBackgroundImage] = useState<string>("/images/bg-1.png");
 
   const getItemCountOnCanvas = useCallback(
     (itemId: string): number => {
@@ -439,7 +440,9 @@ export function useEditorState() {
     placedItems,
     selectedItemIds,
     isEditMode,
+    backgroundImage,
     setIsEditMode,
+    setBackgroundImage,
     addItemToCanvas,
     getItemCountOnCanvas,
     updateItemPosition,

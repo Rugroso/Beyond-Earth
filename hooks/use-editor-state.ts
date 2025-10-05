@@ -4,24 +4,26 @@ import { useState, useCallback, useEffect } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Comida", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
-  { id: "item-002", name: "Silla", shape: "image", imagePath: "/images/silla.png", limit: 10, category: "basics" },
-  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10, category: "basics" },
-  { id: "item-004", name: "Retrete", shape: "image", imagePath: "/images/toilet.png", limit: 10, category: "basics" },
-  { id: "item-005", name: "Café", shape: "image", imagePath: "/images/coffee.png", limit: 10, category: "basics" },
-  { id: "item-006", name: "Cartas", shape: "image", imagePath: "/images/cards.png", limit: 10, category: "entertainment" },
-  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10, category: "basics" },
-  { id: "item-008", name: "tv", shape: "image", imagePath: "/images/tv.png", limit: 10, category: "entertainment" },
-  { id: "item-009", name: "labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10, category: "miscellaneous" },
-  { id: "item-010", name: "shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
-  { id: "item-011", name: "handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
-  { id: "item-012", name: "refri", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
-  { id: "item-013", name: "medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10, category: "basics" },
-  { id: "item-014", name: "trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
-  { id: "item-015", name: "toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
-  { id: "item-016", name: "closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
-  { id: "item-017", name: "kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
-
+  { id: "item-001", name: "Food", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
+  { id: "item-002", name: "Chair", shape: "image", imagePath: "/images/silla.png", limit: 10, category: "basics" },
+  { id: "item-003", name: "Table", shape: "image", imagePath: "/images/table.png", limit: 10, category: "basics" },
+  { id: "item-004", name: "Toilet", shape: "image", imagePath: "/images/toilet.png", limit: 10, category: "basics" },
+  { id: "item-005", name: "Coffee", shape: "image", imagePath: "/images/coffee.png", limit: 10, category: "basics" },
+  { id: "item-006", name: "Cards", shape: "image", imagePath: "/images/cards.png", limit: 10, category: "entertainment" },
+  { id: "item-007", name: "Bed", shape: "image", imagePath: "/images/bed.png", limit: 10, category: "basics" },
+  { id: "item-008", name: "TV", shape: "image", imagePath: "/images/tv.png", limit: 10, category: "entertainment" },
+  { id: "item-009", name: "Labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10, category: "miscellaneous" },
+  { id: "item-010", name: "Shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
+  { id: "item-011", name: "Handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
+  { id: "item-012", name: "Fridge", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
+  { id: "item-013", name: "Medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10, category: "basics" },
+  { id: "item-014", name: "Trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
+  { id: "item-015", name: "Toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
+  { id: "item-016", name: "Closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
+  { id: "item-017", name: "Kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
+  { id: "item-018", name: "Speaker", shape: "image", imagePath: "/images/speaker.png", limit: 10, category: "entertainment" },
+  { id: "item-019", name: "Treadmill", shape: "image", imagePath: "/images/caminadora.png", limit: 10, category: "basics" },
+  { id: "item-020", name: "Weights", shape: "image", imagePath: "/images/pesa.png", limit: 10, category: "basics" }
 ];
 
 const DEFAULT_SIZE = 140;

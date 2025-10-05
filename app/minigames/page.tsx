@@ -13,6 +13,13 @@ export default function MinigamesPage() {
       description: "Controla tu nave y esquiva los meteoros que caen del espacio",
       emoji: "☄️",
       path: "/minigames/meteor-dodger"
+    },
+    {
+      id: "cosmic-leaper",
+      title: "Salto Cósmico",
+      description: "Salta de plataforma en plataforma para alcanzar el infinito.",
+      emoji: "🚀",
+      path: "/minigames/cosmic-leaper"
     }
   ]
 

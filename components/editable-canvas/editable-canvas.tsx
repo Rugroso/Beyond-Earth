@@ -55,8 +55,8 @@ export function EditableCanvas() {
             left: 0,
           }}
         >
-          {placedItems.map((item) => (
-            <PlacedItem key={item.instanceId} item={item} />
+          {placedItems.map((item, index) => (
+            <PlacedItem key={item.instanceId} item={item} zIndex={index} />
           ))}
         </div>
       </div>

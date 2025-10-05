@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 
 interface PlacedItemProps {
   item: PlacedItemType
+  zIndex: number
 }
 
-export function PlacedItem({ item }: PlacedItemProps) {
+export function PlacedItem({ item, zIndex }: PlacedItemProps) {
   const context = useContext(EditorContext)
   const [isResizing, setIsResizing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -19,7 +20,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
   if (!context) return null
 
-  const { availableItems, isEditMode, removeItemFromCanvas, updateItemPosition, updateItemSize } = context
+  const { availableItems, isEditMode, removeItemFromCanvas, updateItemPosition, updateItemSize, bringItemToFront } = context
   const itemDefinition = availableItems.find((i) => i.id === item.itemId)
   if (!itemDefinition) return null
 
@@ -42,6 +43,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
     e.stopPropagation()
     setIsDragging(true)
+    bringItemToFront(item.instanceId)
 
     // Get the canvas element (parent container)
     const canvas = document.querySelector('[data-canvas="true"]')
@@ -123,6 +125,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
         transform: "translate(-50%, -50%)",
         transition: isDragging ? "none" : "all 0.2s ease",
         pointerEvents: "auto",
+        zIndex: isDragging ? 9999 : zIndex, // Use z-index based on array position, max when dragging
       }}
     >
       <div

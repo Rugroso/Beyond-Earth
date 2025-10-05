@@ -26,4 +26,5 @@ export interface EditorContextType {
   updateItemPosition: (instanceId: string, newPosition: { x: number; y: number }) => void;
   updateItemSize: (instanceId: string, newSize: number) => void;
   removeItemFromCanvas: (instanceId: string) => void;
+  bringItemToFront: (instanceId: string) => void;
 }

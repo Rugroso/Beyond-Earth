@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 
 interface PlacedItemProps {
   item: PlacedItemType
+  zIndex: number
 }
 
-export function PlacedItem({ item }: PlacedItemProps) {
+export function PlacedItem({ item, zIndex }: PlacedItemProps) {
   const context = useContext(EditorContext)
   const [isResizing, setIsResizing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -68,6 +69,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
     }
     
     setIsDragging(true)
+    bringItemToFront(item.instanceId)
 
     // Get the canvas element (parent container)
     const canvas = document.querySelector('[data-canvas="true"]')

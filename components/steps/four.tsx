@@ -51,10 +51,10 @@ export function StepFour({ onNext, onBack }: StepFourProps) {
         {sizes.map((size) => (
           <Card
             key={size.id}
-            className={`cursor-pointer transition-all hover:scale-105 ${
+            className={`cursor-pointer transition-all hover:scale-105 bg-black/80 border-white/20 ${
               setup.canvasSize === size.id
-                ? 'ring-4 ring-blue-500 bg-blue-950/50'
-                : 'hover:bg-slate-800/50'
+                ? 'ring-4 ring-blue-500'
+                : 'hover:bg-black/90'
             }`}
             onClick={() => updateSetup({ canvasSize: size.id })}
           >

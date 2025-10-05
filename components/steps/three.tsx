@@ -26,10 +26,10 @@ export function StepThree({ onNext, onBack }: StepThreeProps) {
         {crewSizes.map((size) => (
           <Card
             key={size}
-            className={`cursor-pointer transition-all hover:scale-105 ${
+            className={`cursor-pointer transition-all hover:scale-105 bg-black/80 border-white/20 ${
               setup.crewSize === size
-                ? 'ring-4 ring-blue-500 bg-blue-950/50'
-                : 'hover:bg-slate-800/50'
+                ? 'ring-4 ring-blue-500'
+                : 'hover:bg-black/90'
             }`}
             onClick={() => updateSetup({ crewSize: size })}
           >
@@ -45,10 +45,10 @@ export function StepThree({ onNext, onBack }: StepThreeProps) {
       </div>
 
       <div className="flex justify-between max-w-4xl mx-auto">
-        <Button onClick={onBack} variant="outline" size="lg">
+        <Button onClick={onBack} variant="outline" size="lg" className="border-white text-white hover:bg-white/20">
           <ChevronLeft className="mr-2" /> Atrás
         </Button>
-        <Button onClick={onNext} size="lg" className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={onNext} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={!setup.crewSize}>
           Siguiente <ChevronRight className="ml-2" />
         </Button>
       </div>

@@ -11,7 +11,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "Chair",
     shape: "image",
     imagePath: "/images/silla.png",
-    limit: 10,
+    limit: 2,
     minRequired: 4,
     category: "basics"
   },
@@ -20,7 +20,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "Table",
     shape: "image",
     imagePath: "/images/table.png",
-    limit: 10,
+    limit: 1,
     minRequired: 1,
     category: "basics"
   },
@@ -29,7 +29,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "Toilet",
     shape: "image",
     imagePath: "/images/toilet.png",
-    limit: 10,
+    limit: 1,
     minRequired: 1,
     category: "basics"
   },
@@ -38,7 +38,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "Coffee",
     shape: "image",
     imagePath: "/images/coffee.png",
-    limit: 10,
+    limit: 2,
     minRequired: 1,
     category: "basics"
   },
@@ -47,7 +47,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "Cards",
     shape: "image",
     imagePath: "/images/cards.png",
-    limit: 10,
+    limit: 1,
     minRequired: 0,
     category: "entertainment"
   },
@@ -57,7 +57,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
     name: "TV",
     shape: "image",
     imagePath: "/images/tv.png",
-    limit: 10,
+    limit: 2,
     minRequired: 0,
     category: "entertainment"
   },

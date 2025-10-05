@@ -45,10 +45,10 @@ export function StepOne({ onNext }: StepOneProps) {
         {destinations.map((dest) => (
           <Card
             key={dest.id}
-            className={`cursor-pointer transition-all hover:scale-105 ${
+            className={`cursor-pointer transition-all hover:scale-105 bg-black/80 border-white/20 ${
               setup.destination === dest.id
-                ? 'ring-4 ring-blue-500 bg-blue-950/50'
-                : 'hover:bg-slate-800/50'
+                ? 'ring-4 ring-blue-500'
+                : 'hover:bg-black/90'
             }`}
             onClick={() => updateSetup({ destination: dest.id })}
           >
@@ -78,7 +78,7 @@ export function StepOne({ onNext }: StepOneProps) {
           onClick={onNext}
           disabled={!setup.destination}
           size="lg"
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Siguiente <ChevronRight className="ml-2" />
         </Button>

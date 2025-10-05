@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button"
 
 interface PlacedItemProps {
   item: PlacedItemType
-  zIndex: number
 }
 
-export function PlacedItem({ item, zIndex }: PlacedItemProps) {
+export function PlacedItem({ item }: PlacedItemProps) {
   const context = useContext(EditorContext)
   const [isResizing, setIsResizing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -35,7 +34,7 @@ export function PlacedItem({ item, zIndex }: PlacedItemProps) {
 
   const handleClick = (e: React.MouseEvent) => {
     if (!isEditMode || isResizing || isDragging) return
-    
+
     // Don't handle selection if clicking on buttons or resize handle
     const target = e.target as HTMLElement
     if (target.closest('button') || target.closest('[data-resize-handle]')) {
@@ -43,9 +42,9 @@ export function PlacedItem({ item, zIndex }: PlacedItemProps) {
     }
 
     e.stopPropagation()
-    selectItem(item.instanceId, { 
-      shiftKey: e.shiftKey, 
-      ctrlKey: e.ctrlKey || e.metaKey 
+    selectItem(item.instanceId, {
+      shiftKey: e.shiftKey,
+      ctrlKey: e.ctrlKey || e.metaKey
     })
   }
 
@@ -59,17 +58,16 @@ export function PlacedItem({ item, zIndex }: PlacedItemProps) {
     }
 
     e.stopPropagation()
-    
+
     // Select item if not already selected
     if (!isSelected) {
-      selectItem(item.instanceId, { 
-        shiftKey: e.shiftKey, 
-        ctrlKey: e.ctrlKey || e.metaKey 
+      selectItem(item.instanceId, {
+        shiftKey: e.shiftKey,
+        ctrlKey: e.ctrlKey || e.metaKey
       })
     }
-    
+
     setIsDragging(true)
-    bringItemToFront(item.instanceId)
 
     // Get the canvas element (parent container)
     const canvas = document.querySelector('[data-canvas="true"]')
@@ -143,11 +141,10 @@ export function PlacedItem({ item, zIndex }: PlacedItemProps) {
       data-x={item.position.x}
       data-y={item.position.y}
       data-size={item.size}
-      className={`absolute transition-all ${
-        isEditMode && !isResizing 
-          ? (isDragging ? "cursor-grabbing scale-110 z-50" : "cursor-grab hover:scale-105") 
+      className={`absolute transition-all ${isEditMode && !isResizing
+          ? (isDragging ? "cursor-grabbing scale-110 z-50" : "cursor-grab hover:scale-105")
           : "cursor-default"
-      } ${isSelected ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-transparent" : ""}`}
+        } ${isSelected ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-transparent" : ""}`}
       onClick={handleClick}
       onMouseDown={isEditMode && !isResizing ? handleDragStart : undefined}
       style={{
@@ -167,8 +164,8 @@ export function PlacedItem({ item, zIndex }: PlacedItemProps) {
         }}
       >
         {shape === "image" && itemDefinition.imagePath && (
-          <img 
-            src={itemDefinition.imagePath} 
+          <img
+            src={itemDefinition.imagePath}
             alt={itemDefinition.name}
             className="object-contain"
             style={{

@@ -42,8 +42,8 @@ export function Toolbar() {
       </div>
 
       {/* Tabs de categorías */}
-      <Tabs 
-        value={activeCategory} 
+      <Tabs
+        value={activeCategory}
         onValueChange={(value) => setActiveCategory(value as ItemCategory)}
         className="flex-1 flex flex-col"
       >

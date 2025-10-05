@@ -85,13 +85,12 @@ export function DiagnosticsPanel() {
             return (
               <Card
                 key={item.id}
-                className={`p-3 transition-all ${
-                  isAtLimit
+                className={`p-3 transition-all ${isAtLimit
                     ? "bg-red-900/20 border-red-700"
                     : count > 0
-                    ? "bg-slate-800/50 border-slate-600"
-                    : "bg-slate-800/30 border-slate-700"
-                }`}
+                      ? "bg-slate-800/50 border-slate-600"
+                      : "bg-slate-800/30 border-slate-700"
+                  }`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -123,13 +122,12 @@ export function DiagnosticsPanel() {
 
                 <Progress
                   value={percentage}
-                  className={`h-2 ${
-                    isAtLimit
+                  className={`h-2 ${isAtLimit
                       ? "[&>div]:bg-red-500"
                       : count > item.limit * 0.7
-                      ? "[&>div]:bg-yellow-500"
-                      : "[&>div]:bg-green-500"
-                  }`}
+                        ? "[&>div]:bg-yellow-500"
+                        : "[&>div]:bg-green-500"
+                    }`}
                 />
 
                 {isAtLimit && (

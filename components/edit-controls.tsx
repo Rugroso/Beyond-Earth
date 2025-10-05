@@ -3,10 +3,10 @@
 import { useContext } from "react"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
-import { 
-  ArrowUp, 
-  ArrowDown, 
-  MoveUp, 
+import {
+  ArrowUp,
+  ArrowDown,
+  MoveUp,
   MoveDown,
   Layers
 } from "lucide-react"
@@ -22,13 +22,13 @@ export function EditControls() {
 
   if (!context) return null
 
-  const { 
-    selectedItemIds, 
-    bringToFront, 
-    sendToBack, 
-    bringForward, 
+  const {
+    selectedItemIds,
+    bringToFront,
+    sendToBack,
+    bringForward,
     sendBackward,
-    isEditMode 
+    isEditMode
   } = context
 
   const selectedIds = Array.from(selectedItemIds)

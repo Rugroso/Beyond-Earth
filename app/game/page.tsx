@@ -104,7 +104,7 @@ export default function GamePage() {
           <div className="flex items-center gap-2">
             {/* Edit Controls - Solo visible cuando hay selección */}
             <EditControls />
-            
+
             <Button
               variant="outline"
               size="sm"

@@ -4,19 +4,26 @@ import { useState, useCallback, useEffect } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Comida", shape: "image", imagePath: "/images/food.png", limit: 10 },
-  { id: "item-002", name: "Silla", shape: "image", imagePath: "/images/silla.png", limit: 10 },
-  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10 },
-  { id: "item-004", name: "Retrete", shape: "image", imagePath: "/images/toilet.png", limit: 10 },
-  { id: "item-005", name: "Café", shape: "image", imagePath: "/images/coffee.png", limit: 10 },
-  { id: "item-006", name: "Cartas", shape: "image", imagePath: "/images/cards.png", limit: 10 },
-  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10 },
-  { id: "item-008", name: "tv", shape: "image", imagePath: "/images/tv.png", limit: 10 },
-  { id: "item-009", name: "labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10 },
-  { id: "item-010", name: "shower", shape: "image", imagePath: "/images/shower.png", limit: 10 },
-  { id: "item-011", name: "handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10 },
-  { id: "item-012", name: "refri", shape: "image", imagePath: "/images/refri.png", limit: 10 },
-  { id: "item-013", name: "medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10 }
+  { id: "item-001", name: "Comida", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
+  { id: "item-002", name: "Silla", shape: "image", imagePath: "/images/silla.png", limit: 10, category: "basics" },
+  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10, category: "basics" },
+  { id: "item-004", name: "Retrete", shape: "image", imagePath: "/images/toilet.png", limit: 10, category: "basics" },
+  { id: "item-005", name: "Café", shape: "image", imagePath: "/images/coffee.png", limit: 10, category: "basics" },
+  { id: "item-006", name: "Cartas", shape: "image", imagePath: "/images/cards.png", limit: 10, category: "entertainment" },
+  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10, category: "basics" },
+  { id: "item-008", name: "tv", shape: "image", imagePath: "/images/tv.png", limit: 10, category: "entertainment" },
+  { id: "item-009", name: "labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10, category: "miscellaneous" },
+  { id: "item-010", name: "shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
+  { id: "item-011", name: "handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
+  { id: "item-012", name: "refri", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
+  {
+    id: "item-013",
+    name: "Trampoline",
+    shape: "image",
+    imagePath: "/images/Trampoline.png",
+    limit: 10,
+    category: "miscellaneous"
+  }
 ];
 
 const DEFAULT_SIZE = 140;
@@ -44,10 +51,8 @@ export function useEditorState() {
       const currentCount = getItemCountOnCanvas(itemId);
       if (currentCount >= item.limit) return;
 
-      // Calcular el z-index más alto actual
-      const maxZIndex = placedItems.length > 0 
-        ? Math.max(...placedItems.map(item => item.zIndex))
-        : 0;
+      // Calcular el z-index más alto actual de forma segura
+      const maxZIndex = placedItems.length > 0 ? Math.max(0, ...placedItems.map((item) => item.zIndex || 0)) : 0;
 
       const newItem: PlacedItemType = {
         instanceId: `${itemId}-${Date.now()}-${Math.random()}`,
@@ -58,7 +63,7 @@ export function useEditorState() {
       };
 
       setPlacedItems((prev) => [...prev, newItem]);
-      
+
       // Auto-select the newly added item
       setSelectedItemIds(new Set([newItem.instanceId]));
     },
@@ -71,13 +76,13 @@ export function useEditorState() {
 
   const bringItemToFront = useCallback((instanceId: string) => {
     setPlacedItems((prev) => {
-      const itemIndex = prev.findIndex(item => item.instanceId === instanceId);
+      const itemIndex = prev.findIndex((item) => item.instanceId === instanceId);
       if (itemIndex === -1 || itemIndex === prev.length - 1) return prev; // Already at front or not found
-      
+
       const newItems = [...prev];
       const [movedItem] = newItems.splice(itemIndex, 1);
       newItems.push(movedItem);
-      
+
       return newItems;
     });
   }, []);
@@ -98,10 +103,10 @@ export function useEditorState() {
 
   const selectItem = useCallback((instanceId: string, options?: { shiftKey?: boolean; ctrlKey?: boolean }) => {
     const { shiftKey = false, ctrlKey = false } = options || {};
-    
+
     setSelectedItemIds((prev) => {
       const newSet = new Set(prev);
-      
+
       if (shiftKey || ctrlKey) {
         // Multi-selection: toggle the item
         if (newSet.has(instanceId)) {
@@ -114,7 +119,7 @@ export function useEditorState() {
         newSet.clear();
         newSet.add(instanceId);
       }
-      
+
       return newSet;
     });
   }, []);
@@ -128,13 +133,17 @@ export function useEditorState() {
     setSelectedItemIds(new Set());
   }, [selectedItemIds]);
 
-  const isItemSelected = useCallback((instanceId: string) => {
-    return selectedItemIds.has(instanceId);
-  }, [selectedItemIds]);
+  const isItemSelected = useCallback(
+    (instanceId: string) => {
+      return selectedItemIds.has(instanceId);
+    },
+    [selectedItemIds]
+  );
 
   const bringToFront = useCallback((instanceIds: string[]) => {
     setPlacedItems((prev) => {
-      const maxZIndex = Math.max(...prev.map(item => item.zIndex));
+      if (prev.length === 0) return prev;
+      const maxZIndex = Math.max(0, ...prev.map((item) => item.zIndex || 0));
       return prev.map((item) => {
         if (instanceIds.includes(item.instanceId)) {
           return { ...item, zIndex: maxZIndex + 1 };
@@ -146,7 +155,8 @@ export function useEditorState() {
 
   const sendToBack = useCallback((instanceIds: string[]) => {
     setPlacedItems((prev) => {
-      const minZIndex = Math.min(...prev.map(item => item.zIndex));
+      if (prev.length === 0) return prev;
+      const minZIndex = Math.min(0, ...prev.map((item) => item.zIndex || 0));
       return prev.map((item) => {
         if (instanceIds.includes(item.instanceId)) {
           return { ...item, zIndex: minZIndex - 1 };
@@ -160,7 +170,7 @@ export function useEditorState() {
     setPlacedItems((prev) => {
       return prev.map((item) => {
         if (instanceIds.includes(item.instanceId)) {
-          return { ...item, zIndex: item.zIndex + 1 };
+          return { ...item, zIndex: (item.zIndex || 0) + 1 };
         }
         return item;
       });
@@ -171,7 +181,7 @@ export function useEditorState() {
     setPlacedItems((prev) => {
       return prev.map((item) => {
         if (instanceIds.includes(item.instanceId)) {
-          return { ...item, zIndex: item.zIndex - 1 };
+          return { ...item, zIndex: (item.zIndex || 0) - 1 };
         }
         return item;
       });
@@ -188,14 +198,14 @@ export function useEditorState() {
           deleteSelectedItems();
         }
       }
-      
+
       // Ctrl+A or Cmd+A - select all items
       if ((event.ctrlKey || event.metaKey) && event.key === "a") {
         event.preventDefault();
-        const allIds = placedItems.map(item => item.instanceId);
+        const allIds = placedItems.map((item) => item.instanceId);
         setSelectedItemIds(new Set(allIds));
       }
-      
+
       // Escape - clear selection
       if (event.key === "Escape") {
         clearSelection();
@@ -219,6 +229,13 @@ export function useEditorState() {
     updateItemPosition,
     updateItemSize,
     removeItemFromCanvas,
-    bringItemToFront
+    selectItem,
+    clearSelection,
+    deleteSelectedItems,
+    isItemSelected,
+    bringToFront,
+    sendToBack,
+    bringForward,
+    sendBackward
   };
 }

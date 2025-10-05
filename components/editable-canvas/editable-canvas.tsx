@@ -16,7 +16,8 @@ export function EditableCanvas() {
   const { placedItems, clearSelection } = context
 
   // Ordenar items por z-index para renderizar en el orden correcto
-  const sortedItems = [...placedItems].sort((a, b) => a.zIndex - b.zIndex)
+  // Manejar items sin zIndex asignándoles 0 por defecto
+  const sortedItems = [...placedItems].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
 
   // Calculate the scaled dimensions
   const scaledWidth = nativeWidth * scale

@@ -13,11 +13,22 @@ export function EditableCanvas() {
 
   if (!context) return null
 
-  const { placedItems } = context
+  const { placedItems, clearSelection } = context
+
+  // Ordenar items por z-index para renderizar en el orden correcto
+  const sortedItems = [...placedItems].sort((a, b) => a.zIndex - b.zIndex)
 
   // Calculate the scaled dimensions
   const scaledWidth = nativeWidth * scale
   const scaledHeight = nativeHeight * scale
+
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    // Only clear selection if clicking directly on the canvas background
+    // (not on a placed item)
+    if (e.target === e.currentTarget) {
+      clearSelection()
+    }
+  }
 
   return (
     // Viewport layer: flexible container that centers its content
@@ -44,6 +55,7 @@ export function EditableCanvas() {
           data-canvas="true"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
+          onClick={handleCanvasClick}
           className="relative bg-white shadow-2xl"
           style={{
             width: `${nativeWidth}px`,
@@ -55,7 +67,7 @@ export function EditableCanvas() {
             left: 0,
           }}
         >
-          {placedItems.map((item) => (
+          {sortedItems.map((item) => (
             <PlacedItem key={item.instanceId} item={item} />
           ))}
         </div>

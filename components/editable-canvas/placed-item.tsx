@@ -19,16 +19,33 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
   if (!context) return null
 
-  const { availableItems, isEditMode, removeItemFromCanvas, updateItemPosition, updateItemSize } = context
+  const { availableItems, isEditMode, removeItemFromCanvas, updateItemPosition, updateItemSize, selectItem, isItemSelected } = context
   const itemDefinition = availableItems.find((i) => i.id === item.itemId)
   if (!itemDefinition) return null
 
   const { shape } = itemDefinition
+  const isSelected = isItemSelected(item.instanceId)
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
     removeItemFromCanvas(item.instanceId)
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isEditMode || isResizing || isDragging) return
+    
+    // Don't handle selection if clicking on buttons or resize handle
+    const target = e.target as HTMLElement
+    if (target.closest('button') || target.closest('[data-resize-handle]')) {
+      return
+    }
+
+    e.stopPropagation()
+    selectItem(item.instanceId, { 
+      shiftKey: e.shiftKey, 
+      ctrlKey: e.ctrlKey || e.metaKey 
+    })
   }
 
   const handleDragStart = (e: React.MouseEvent) => {
@@ -41,6 +58,15 @@ export function PlacedItem({ item }: PlacedItemProps) {
     }
 
     e.stopPropagation()
+    
+    // Select item if not already selected
+    if (!isSelected) {
+      selectItem(item.instanceId, { 
+        shiftKey: e.shiftKey, 
+        ctrlKey: e.ctrlKey || e.metaKey 
+      })
+    }
+    
     setIsDragging(true)
 
     // Get the canvas element (parent container)
@@ -115,7 +141,12 @@ export function PlacedItem({ item }: PlacedItemProps) {
       data-x={item.position.x}
       data-y={item.position.y}
       data-size={item.size}
-      className={`absolute transition-all ${isEditMode && !isResizing ? (isDragging ? "cursor-grabbing scale-110 z-50" : "cursor-grab hover:scale-105") : "cursor-default"}`}
+      className={`absolute transition-all ${
+        isEditMode && !isResizing 
+          ? (isDragging ? "cursor-grabbing scale-110 z-50" : "cursor-grab hover:scale-105") 
+          : "cursor-default"
+      } ${isSelected ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-transparent" : ""}`}
+      onClick={handleClick}
       onMouseDown={isEditMode && !isResizing ? handleDragStart : undefined}
       style={{
         left: `${item.position.x}px`,
@@ -123,6 +154,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
         transform: "translate(-50%, -50%)",
         transition: isDragging ? "none" : "all 0.2s ease",
         pointerEvents: "auto",
+        zIndex: isDragging ? 9999 : item.zIndex, // Mantener z-index del item, excepto al arrastrar
       }}
     >
       <div

@@ -5,6 +5,7 @@ import { EditableCanvas } from "@/components/editable-canvas/editable-canvas"
 import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
+import { EditControls } from "@/components/edit-controls"
 import { Edit3, Eye, Download, Loader2 } from "lucide-react"
 import { useCanvasCapture } from "@/hooks/use-canvas-capture"
 import { useToast } from "@/hooks/use-toast"
@@ -101,6 +102,9 @@ export default function GamePage() {
             {isEditMode ? "Editando" : "Vista previa"}
           </h1>
           <div className="flex items-center gap-2">
+            {/* Edit Controls - Solo visible cuando hay selección */}
+            <EditControls />
+            
             <Button
               variant="outline"
               size="sm"

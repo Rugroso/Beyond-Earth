@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, Suspense, useEffect } from "react"
-import { Canvas, useLoader } from "@react-three/fiber"
+import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Sphere, useTexture } from "@react-three/drei"
 import * as THREE from "three"
 
@@ -15,11 +15,6 @@ function Earth({ onLoaded }: EarthProps) {
   // Load the earth texture using useTexture from drei (better for performance)
   const earthTexture = useTexture("/earth.jpg")
 
-  useEffect(() => {
-    if (earthTexture && onLoaded) {
-      onLoaded()
-    }
-  }, [earthTexture, onLoaded])
 
   return (
     <group position={[0, 0, 0]}>

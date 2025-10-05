@@ -50,8 +50,8 @@ export function StartScreen() {
     setEarthLoaded(true)
   }
 
-  const handleStart = () => {
-    router.push("/start")
+  const handleStart = (route: string) => {
+    router.push(route)
   }
 
   return (
@@ -93,7 +93,7 @@ export function StartScreen() {
       {/* Content */}
       {!isLoading && (
         <div className="flex flex-row animate-fade-in-content">
-        <div className="flex items-center justify-center -ml-300">
+        <div className="animate-earth-from-left flex items-center justify-center -ml-300">
             <Earth3D onLoaded={handleEarthLoaded} />
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center px-4 gap-2 ml-32">
@@ -106,12 +106,36 @@ export function StartScreen() {
             </p>
           </div>
           <Button
-            onClick={handleStart}
+            onClick={() => handleStart("/start")}
             size="lg"
-            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-4 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70"
+            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-4 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
           >
             START MISSION
           </Button>
+
+        <Button
+            onClick={() => handleStart("/asset-creator")}
+            size="lg"
+            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
+        >
+            CREATE YOUR OWN ASSET
+        </Button>
+
+        <Button
+            onClick={() => handleStart("/resources")}
+            size="lg"
+            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
+        >
+            SEE RESOURCES
+        </Button>
+
+        <Button
+            onClick={() => handleStart("/minigames")}
+            size="lg"
+            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
+        >
+            🎮 MINIGAMES
+        </Button>
         </div>
         </div>
 
@@ -173,6 +197,21 @@ export function StartScreen() {
         .animate-pulse-glow {
           animation: pulse-glow 1.5s ease-in-out infinite;
         }
+
+        .animate-earth-from-left {
+          animation: earth-from-left 0s ease-out forwards;
+        }
+
+        @keyframes earth-from-left {
+          from {
+            opacity: 0;
+            transform: translateX(0px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0px);
+          }
+        }  
 
         /* Individual stars */
         .star {

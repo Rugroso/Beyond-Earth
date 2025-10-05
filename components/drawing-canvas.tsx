@@ -214,14 +214,14 @@ export function DrawingCanvas({ onClose }: DrawingCanvasProps) {
             variant={tool === "brush" ? "default" : "outline"}
             className={tool === "brush" ? "bg-blue-600" : ""}
           >
-            🖌️ Pincel
+            Brush
           </Button>
           <Button
             onClick={() => setTool("eraser")}
             variant={tool === "eraser" ? "default" : "outline"}
             className={tool === "eraser" ? "bg-blue-600" : ""}
           >
-            🧹 Borrador
+            Eraser
           </Button>
         </div>
 
@@ -256,7 +256,7 @@ export function DrawingCanvas({ onClose }: DrawingCanvasProps) {
 
         {/* Brush Size */}
         <div className="flex gap-2 items-center min-w-[200px]">
-          <span className="text-white text-sm">Tamaño:</span>
+          <span className="text-white text-sm">Size:</span>
           <Slider
             value={[brushSize]}
             onValueChange={(value) => setBrushSize(value[0])}

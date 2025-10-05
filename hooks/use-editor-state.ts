@@ -26,7 +26,9 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-019", name: "Treadmill", shape: "image", imagePath: "/images/caminadora.png", limit: 10, category: "basics" },
   { id: "item-020", name: "Weights", shape: "image", imagePath: "/images/pesa.png", limit: 10, category: "basics" },
   { id: "item-021", name: "Computer", shape: "image", imagePath: "/images/computer.png", limit: 10, category: "entertainment" },
-  { id: "item-022", name: "Radio", shape: "image", imagePath: "/images/radio.png", limit: 10, category: "miscellaneous" }
+  { id: "item-022", name: "Radio", shape: "image", imagePath: "/images/radio.png", limit: 10, category: "miscellaneous" },
+  { id: "item-023", name: "Solar Battery", shape: "image", imagePath: "/images/solar_battery.png", limit: 5, category: "basics" },
+  { id: "item-024", name: "Clean Kit", shape: "image", imagePath: "/images/clean_kit.png", limit: 5, category: "basics" }
 ];
 
 const DEFAULT_SIZE = 140;

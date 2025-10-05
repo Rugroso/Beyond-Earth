@@ -128,7 +128,7 @@ export default function GamePage() {
                   ) : (
                     <AlertCircle className="h-4 w-4 text-orange-400" />
                   )}
-                  <span className="text-sm">
+                  <span className="text-sm text-white">
                     Requirements: {metCount}/{totalCount}
                   </span>
                 </Button>

@@ -2,30 +2,31 @@
 
 import { useState, useCallback, useEffect } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
+import { Computer } from "lucide-react";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  {
-    id: "item-001",
-    name: "Comida",
-    shape: "image",
-    imagePath: "/images/food.png",
-    limit: 10,
-    minRequired: 2,
-    category: "basics"
-  },
+  { id: "item-001", name: "Food", shape: "image", imagePath: "/images/food.png", limit: 10, minRequired: 2, category: "basics" },
   {
     id: "item-002",
-    name: "Silla",
+    name: "Chair",
     shape: "image",
     imagePath: "/images/silla.png",
     limit: 10,
     minRequired: 4,
     category: "basics"
   },
-  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10, minRequired: 1, category: "basics" },
+  {
+    id: "item-003",
+    name: "Table",
+    shape: "image",
+    imagePath: "/images/table.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
   {
     id: "item-004",
-    name: "Retrete",
+    name: "Toilet",
     shape: "image",
     imagePath: "/images/toilet.png",
     limit: 10,
@@ -34,7 +35,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-005",
-    name: "Café",
+    name: "Coffee",
     shape: "image",
     imagePath: "/images/coffee.png",
     limit: 10,
@@ -43,17 +44,17 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-006",
-    name: "Cartas",
+    name: "Cards",
     shape: "image",
     imagePath: "/images/cards.png",
     limit: 10,
     minRequired: 0,
     category: "entertainment"
   },
-  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10, minRequired: 3, category: "basics" },
+  { id: "item-007", name: "Bed", shape: "image", imagePath: "/images/bed.png", limit: 10, minRequired: 3, category: "basics" },
   {
     id: "item-008",
-    name: "tv",
+    name: "TV",
     shape: "image",
     imagePath: "/images/tv.png",
     limit: 10,
@@ -62,7 +63,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-009",
-    name: "labubu",
+    name: "Labubu",
     shape: "image",
     imagePath: "/images/labubu.png",
     limit: 10,
@@ -71,7 +72,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-010",
-    name: "shower",
+    name: "Shower",
     shape: "image",
     imagePath: "/images/shower.png",
     limit: 10,
@@ -80,7 +81,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-011",
-    name: "handwash",
+    name: "Handwash",
     shape: "image",
     imagePath: "/images/handwash.png",
     limit: 10,
@@ -89,7 +90,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-012",
-    name: "refri",
+    name: "Fridge",
     shape: "image",
     imagePath: "/images/refri.png",
     limit: 10,
@@ -98,7 +99,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-013",
-    name: "medkit",
+    name: "Medkit",
     shape: "image",
     imagePath: "/images/medkit.png",
     limit: 10,
@@ -107,7 +108,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-014",
-    name: "trashcan",
+    name: "Trashcan",
     shape: "image",
     imagePath: "/images/trashcan.png",
     limit: 10,
@@ -116,7 +117,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-015",
-    name: "toolbox",
+    name: "Toolbox",
     shape: "image",
     imagePath: "/images/toolbox.png",
     limit: 10,
@@ -125,7 +126,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-016",
-    name: "closet",
+    name: "Closet",
     shape: "image",
     imagePath: "/images/closet.png",
     limit: 10,
@@ -134,10 +135,73 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   },
   {
     id: "item-017",
-    name: "kitchen",
+    name: "Kitchen",
     shape: "image",
     imagePath: "/images/kitchen.png",
     limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-018",
+    name: "Speaker",
+    shape: "image",
+    imagePath: "/images/speaker.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-019",
+    name: "Treadmill",
+    shape: "image",
+    imagePath: "/images/caminadora.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-020",
+    name: "Weights",
+    shape: "image",
+    imagePath: "/images/pesa.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-021",
+    name: "Computer",
+    shape: "image",
+    imagePath: "/images/computer.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-022",
+    name: "Radio",
+    shape: "image",
+    imagePath: "/images/radio.png",
+    limit: 10,
+    minRequired: 0,
+    category: "miscellaneous"
+  },
+  {
+    id: "item-023",
+    name: "Solar Battery",
+    shape: "image",
+    imagePath: "/images/solar_battery.png",
+    limit: 5,
+    minRequired: 2,
+    category: "basics"
+  },
+  {
+    id: "item-024",
+    name: "Clean Kit",
+    shape: "image",
+    imagePath: "/images/clean_kit.png",
+    limit: 5,
     minRequired: 1,
     category: "basics"
   }

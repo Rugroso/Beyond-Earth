@@ -74,7 +74,7 @@ export default function MinigamesPage() {
       id: "cosmic-leaper",
       title: "Salto Cósmico",
       description: "Salta de plataforma en plataforma para alcanzar el infinito.",
-      image_path: "/images/cohete_espacial.png",
+      image_path: "/images/Trampoline.png",
       path: "/minigames/cosmic-leaper"
     }
   ]

@@ -121,7 +121,7 @@ export function StartScreen() {
               BEYOND EARTH
             </h1>
             <p className="text-xl text-blue-200/80">
-              Embark on your cosmic journey
+              Your Home Beyond
             </p>
           </div>
           <Button

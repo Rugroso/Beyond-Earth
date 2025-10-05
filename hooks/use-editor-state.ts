@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
+import { Computer } from "lucide-react";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-001", name: "Food", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
@@ -23,7 +24,9 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-017", name: "Kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
   { id: "item-018", name: "Speaker", shape: "image", imagePath: "/images/speaker.png", limit: 10, category: "entertainment" },
   { id: "item-019", name: "Treadmill", shape: "image", imagePath: "/images/caminadora.png", limit: 10, category: "basics" },
-  { id: "item-020", name: "Weights", shape: "image", imagePath: "/images/pesa.png", limit: 10, category: "basics" }
+  { id: "item-020", name: "Weights", shape: "image", imagePath: "/images/pesa.png", limit: 10, category: "basics" },
+  { id: "item-021", name: "Computer", shape: "image", imagePath: "/images/computer.png", limit: 10, category: "entertainment" },
+  { id: "item-022", name: "Radio", shape: "image", imagePath: "/images/radio.png", limit: 10, category: "miscellaneous" }
 ];
 
 const DEFAULT_SIZE = 140;

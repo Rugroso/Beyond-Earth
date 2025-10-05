@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { StepOne, StepTwo, StepThree } from "@/components/steps"
+import { StepOne, StepTwo, StepThree, StepFour } from "@/components/steps"
 import { Howl } from "howler"
 
-// Definir los pasos del tutorial
-const STEPS = [StepOne, StepTwo, StepThree]
+// Definir los pasos del tutorial - IMPORTANTE: Incluir StepFour
+const STEPS = [StepOne, StepTwo, StepThree, StepFour]
 
 export default function StartPage() {
   const router = useRouter()
@@ -35,26 +35,29 @@ export default function StartPage() {
   }, [])
 
   const handleNext = () => {
+    console.log('📍 Current step:', currentStep, 'Total steps:', STEPS.length)
     if (currentStep < STEPS.length - 1) {
+      console.log('➡️ Going to next step:', currentStep + 1)
       setCurrentStep(currentStep + 1)
     } else {
-      // Si es el último paso, ir al juego
-      router.push("/game")
+      console.log('✅ Already at last step')
     }
+    // El último paso (StepFour) maneja la navegación al juego
   }
 
   const handleBack = () => {
     if (currentStep > 0) {
+      console.log('⬅️ Going back to step:', currentStep - 1)
       setCurrentStep(currentStep - 1)
     } else {
+      console.log('🏠 Going back to home')
       router.push("/")
     }
   }
 
-
   const CurrentStepComponent = STEPS[currentStep]
-  const isFirstStep = currentStep === 0
-  const isLastStep = currentStep === STEPS.length - 1
+  
+  console.log('🎬 Rendering step', currentStep + 1, 'of', STEPS.length)
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
@@ -73,7 +76,7 @@ export default function StartPage() {
         ))}
       </div>
 
-      {/* Header con indicador de progreso y botón Skip */}
+      {/* Header con indicador de progreso */}
       <div className="relative z-10 flex items-center justify-between p-6">
         <div className="flex items-center gap-2">
           {STEPS.map((_, index) => (
@@ -89,39 +92,17 @@ export default function StartPage() {
             />
           ))}
         </div>
+        <div className="text-white text-sm font-medium">
+          Paso {currentStep + 1} de {STEPS.length}
+        </div>
       </div>
 
       {/* Contenido del paso actual */}
-      <div className="relative z-10 flex-1 flex items-center justify-center">
-        <div className="w-full max-w-4xl animate-fade-in">
-          <CurrentStepComponent />
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-5xl animate-fade-in">
+          <CurrentStepComponent onNext={handleNext} onBack={handleBack} />
         </div>
       </div>
-
-      {/* Controles de navegación */}
-      <div className="relative z-10 flex items-center justify-between p-6">
-        <Button
-          onClick={handleBack}
-          variant="outline"
-          size="lg"
-          className="bg-white/10 hover:bg-white/20 text-white border-white/30"
-        >
-          {isFirstStep ? "Volver al Inicio" : "Atrás"}
-        </Button>
-
-        <Button
-          onClick={handleNext}
-          size="lg"
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          {isLastStep ? "Comenzar Juego" : "Siguiente"}
-        </Button>
-      </div>
-
-      {/* Secuencia de pasos , aqui vamos a poner las animaciones, estan en proceso*/}
-        <div className="text-white text-xl font-bold absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          Paso {currentStep + 1} de {STEPS.length}
-        </div>
 
       <style jsx>{`
         @keyframes fade-in {

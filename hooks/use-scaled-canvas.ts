@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-// Native resolution of the canvas (design coordinates)
-const NATIVE_WIDTH = 1920;
-const NATIVE_HEIGHT = 1080;
+import { useSetup } from "@/contexts/setup-context";
+import { CANVAS_SIZES } from "@/types/setup";
 
 export function useScaledCanvas() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const { setup } = useSetup();
+
+  // Get native dimensions from setup, fallback to medium
+  const canvasSize = setup.canvasSize || 'medium';
+  const { width: NATIVE_WIDTH, height: NATIVE_HEIGHT } = CANVAS_SIZES[canvasSize];
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -34,7 +37,7 @@ export function useScaledCanvas() {
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [NATIVE_WIDTH, NATIVE_HEIGHT]);
 
   /**
    * Translates mouse coordinates from screen space to native canvas coordinates.

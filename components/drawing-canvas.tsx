@@ -1,12 +1,14 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Howl } from "howler"
 
 export function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const router = useRouter()
   const [isDrawing, setIsDrawing] = useState(false)
   const [color, setColor] = useState("#ffffff")
   const [brushSize, setBrushSize] = useState(5)
@@ -130,7 +132,16 @@ export function DrawingCanvas() {
 
   return (
     <div className="flex flex-col gap-4 p-6 bg-slate-900 rounded-lg">
-      <h2 className="text-2xl font-bold text-white">Creador de Assets</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-white">Asset Creator</h2>
+        <Button
+          onClick={() => router.push("/")}
+          variant="outline"
+          className="border-white/30 text-black hover:bg-white/10"
+        >
+          ← Back to Home
+        </Button>
+      </div>
       {/* Canvas */}
       <div className="relative bg-slate-800 rounded-lg p-4 flex items-center justify-center">
         <canvas
@@ -154,14 +165,14 @@ export function DrawingCanvas() {
             variant={tool === "brush" ? "default" : "outline"}
             className={tool === "brush" ? "bg-blue-600" : ""}
           >
-            🖌️ Pincel
+            Brush
           </Button>
           <Button
             onClick={() => setTool("eraser")}
             variant={tool === "eraser" ? "default" : "outline"}
             className={tool === "eraser" ? "bg-blue-600" : ""}
           >
-            🧹 Borrador
+            Eraser
           </Button>
         </div>
 
@@ -192,15 +203,15 @@ export function DrawingCanvas() {
                 setTool("brush")
               }}
               className="w-10 h-10 rounded-lg cursor-pointer border-2 border-white/30 hover:border-blue-400 transition-colors"
-              title="Selector de color personalizado"
+              title="Custom color picker"
             />
             <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Personalizado
+              Custom
             </span>
           </div>
           {/* Current color display */}
           <div className="flex items-center gap-2 ml-2 px-3 py-1 bg-slate-800 rounded-lg border border-white/20">
-            <span className="text-white text-xs">Actual:</span>
+            <span className="text-white text-xs">Current:</span>
             <div 
               className="w-6 h-6 rounded border-2 border-white/30"
               style={{ backgroundColor: color }}
@@ -211,7 +222,7 @@ export function DrawingCanvas() {
 
         {/* Brush Size */}
         <div className="flex gap-2 items-center min-w-[200px]">
-          <span className="text-white text-sm">Tamaño:</span>
+          <span className="text-white text-sm">Size:</span>
           <Slider
             value={[brushSize]}
             onValueChange={(value) => setBrushSize(value[0])}
@@ -230,26 +241,26 @@ export function DrawingCanvas() {
             variant="outline"
             className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
           >
-            🗑️ Limpiar
+            Clear
           </Button>
           <Button
             onClick={saveAsset}
             className="bg-green-600 hover:bg-green-700"
           >
-            💾 Guardar PNG
+            Save PNG
           </Button>
         </div>
       </div>
 
       {/* Instructions */}
       <div className="text-sm text-gray-400 bg-slate-800 p-3 rounded">
-        <p><strong>Instrucciones:</strong></p>
+        <p><strong>Instructions:</strong></p>
         <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>Haz clic y arrastra para dibujar en el canvas</li>
-          <li>Selecciona un color de la paleta o usa el selector personalizado</li>
-          <li>Ajusta el tamaño del pincel con el slider</li>
-          <li>Usa el borrador para eliminar partes del dibujo</li>
-          <li>Guarda tu asset en formato PNG transparente</li>
+          <li>Click and drag to draw on the canvas</li>
+          <li>Select a color from the palette or use the custom color picker</li>
+          <li>Adjust the brush size with the slider</li>
+          <li>Use the eraser to remove parts of your drawing</li>
+          <li>Save your asset in transparent PNG format</li>
         </ul>
       </div>
     </div>

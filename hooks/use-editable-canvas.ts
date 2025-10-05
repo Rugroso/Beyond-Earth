@@ -15,13 +15,15 @@ export function useEditableCanvas({ translateMouseCoordinates }: UseEditableCanv
     throw new Error("useEditableCanvas must be used within EditorProvider");
   }
 
-  const { addItemToCanvas, updateItemPosition } = context;
+  const { addItemToCanvas, updateItemPosition, isEditMode } = context;
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!isEditMode) return;
     event.preventDefault();
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!isEditMode) return;
     event.preventDefault();
 
     // Translate mouse coordinates from screen space to native canvas coordinates
@@ -45,5 +47,6 @@ export function useEditableCanvas({ translateMouseCoordinates }: UseEditableCanv
   return {
     handleDragOver,
     handleDrop,
+    isEditMode
   };
 }

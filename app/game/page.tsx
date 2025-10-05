@@ -1,10 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { EditableCanvas } from "@/components/editable-canvas/editable-canvas"
 import { Toolbar } from "@/components/toolbar/toolbar"
+import { EditorContext } from "@/contexts/editor-context"
+import { Button } from "@/components/ui/button"
+import { Edit3, Eye } from "lucide-react"
 
 export default function GamePage() {
+  const context = useContext(EditorContext)
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
 
   useEffect(() => {
@@ -18,6 +22,10 @@ export default function GamePage() {
     }))
     setStars(generatedStars)
   }, [])
+
+  if (!context) return null
+
+  const { isEditMode, setIsEditMode } = context
 
   return (
     <div className="relative flex h-screen flex-col bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
@@ -43,7 +51,29 @@ export default function GamePage() {
 
       {/* Navigation Bar */}
       <header className="relative z-10 flex-shrink-0 border-b border-white/10 bg-slate-900/50 backdrop-blur-sm px-6 py-4">
-        <h1 className="text-lg font-medium text-white">Edit Screen</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-medium text-white">
+            {isEditMode ? "Editing" : "Preview"}
+          </h1>
+          <Button
+            variant={isEditMode ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setIsEditMode(!isEditMode)}
+            className="gap-2"
+          >
+            {isEditMode ? (
+              <>
+                <Eye className="h-4 w-4" />
+                Preview
+              </>
+            ) : (
+              <>
+                <Edit3 className="h-4 w-4" />
+                Edit
+              </>
+            )}
+          </Button>
+        </div>
       </header>
 
       {/* Main Content Area - Canvas takes all available space */}
@@ -51,10 +81,12 @@ export default function GamePage() {
         <EditableCanvas />
       </div>
 
-      {/* Toolbar at bottom - fixed height, responsive */}
-      <div className="relative z-10 flex-shrink-0">
-        <Toolbar />
-      </div>
+      {/* Toolbar at bottom - only visible in EDIT mode */}
+      {isEditMode && (
+        <div className="relative z-10 flex-shrink-0">
+          <Toolbar />
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes twinkle {

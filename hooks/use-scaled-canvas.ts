@@ -18,13 +18,13 @@ export function useScaledCanvas() {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width: viewportWidth, height: viewportHeight } = entry.contentRect;
-        
+
         // Calculate the scale to fit the native canvas within the viewport
         // while maintaining aspect ratio
         const scaleX = viewportWidth / NATIVE_WIDTH;
         const scaleY = viewportHeight / NATIVE_HEIGHT;
         const newScale = Math.min(scaleX, scaleY);
-        
+
         setScale(newScale);
       }
     });
@@ -47,15 +47,15 @@ export function useScaledCanvas() {
 
     // Get the bounding rectangle of the SCALED CONTENT (not the viewport)
     const rect = contentRef.current.getBoundingClientRect();
-    
+
     // Calculate mouse position relative to the scaled content
     const mouseX = clientX - rect.left;
     const mouseY = clientY - rect.top;
-    
+
     // Convert to native coordinates by dividing by the scale factor
     const nativeX = mouseX / scale;
     const nativeY = mouseY / scale;
-    
+
     return { x: nativeX, y: nativeY };
   };
 
@@ -65,6 +65,6 @@ export function useScaledCanvas() {
     contentRef,
     translateMouseCoordinates,
     nativeWidth: NATIVE_WIDTH,
-    nativeHeight: NATIVE_HEIGHT,
+    nativeHeight: NATIVE_HEIGHT
   };
 }

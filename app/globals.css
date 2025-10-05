@@ -123,3 +123,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Wiggle animation for edit mode */
+@keyframes wiggle {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-50%, -50%) rotate(-1deg);
+  }
+  75% {
+    transform: translate(-50%, -50%) rotate(1deg);
+  }
+}
+
+.wiggle {
+  animation: wiggle 0.3s ease-in-out infinite;
+}

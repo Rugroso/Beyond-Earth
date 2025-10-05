@@ -21,7 +21,7 @@ export function EditableCanvas() {
 
   return (
     // Viewport layer: flexible container that centers its content
-    <div 
+    <div
       ref={viewportRef}
       className="relative h-full w-full overflow-hidden bg-slate-800"
       style={{

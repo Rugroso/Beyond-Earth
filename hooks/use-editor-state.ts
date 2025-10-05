@@ -9,9 +9,14 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-003", name: "Componente C", shape: "triangle", limit: 2 }
 ];
 
+const DEFAULT_SIZE = 80;
+const MIN_SIZE = 50;
+const MAX_SIZE = 200;
+
 export function useEditorState() {
   const [availableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
   const [placedItems, setPlacedItems] = useState<PlacedItemType[]>([]);
+  const [isEditMode, setIsEditMode] = useState<boolean>(true); // Start in Edit Mode
 
   const getItemCountOnCanvas = useCallback(
     (itemId: string): number => {
@@ -31,7 +36,8 @@ export function useEditorState() {
       const newItem: PlacedItemType = {
         instanceId: `${itemId}-${Date.now()}-${Math.random()}`,
         itemId,
-        position
+        position,
+        size: DEFAULT_SIZE
       };
 
       setPlacedItems((prev) => [...prev, newItem]);
@@ -43,11 +49,29 @@ export function useEditorState() {
     setPlacedItems((prev) => prev.map((item) => (item.instanceId === instanceId ? { ...item, position: newPosition } : item)));
   }, []);
 
+  const updateItemSize = useCallback((instanceId: string, newSize: number) => {
+    // Clamp size between MIN_SIZE and MAX_SIZE
+    const clampedSize = Math.max(MIN_SIZE, Math.min(MAX_SIZE, newSize));
+    setPlacedItems((prev) => 
+      prev.map((item) => 
+        item.instanceId === instanceId ? { ...item, size: clampedSize } : item
+      )
+    );
+  }, []);
+
+  const removeItemFromCanvas = useCallback((instanceId: string) => {
+    setPlacedItems((prev) => prev.filter((item) => item.instanceId !== instanceId));
+  }, []);
+
   return {
     availableItems,
     placedItems,
+    isEditMode,
+    setIsEditMode,
     addItemToCanvas,
     getItemCountOnCanvas,
-    updateItemPosition
+    updateItemPosition,
+    updateItemSize,
+    removeItemFromCanvas
   };
 }

@@ -83,11 +83,35 @@ export default function ResourcesPage() {
   const resources: Resource[] = [
     {
       id: "1",
-      title: "Information on understanding volumetric requirements for crews in space habitats.",
-      description: "C. Stromgren, C. Burke, J. Cho, R. Calderon, M. Rucker",
+      title: "Defining the Net Habitable Volume for Long Duration Exploration Missions",
+      description: "C. Stromgren, C. Burke, J. Cho, R. Calderon, M. Rucker: Information on understanding volumetric requirements for crews in space habitats",
       type: "document",
       url: "https://ntrs.nasa.gov/api/citations/20200002973/downloads/20200002973.pdf",
       category: "Documentation"
+    },
+    {
+      id: "8",
+      title: "Habitats and Surface Construction Technology and Development Roadmap",
+      description: "M. Cohen and K. Kennedy: Information on different options for space habitat design and a taxonomy for space habitat classification.",
+      type: "document",
+      url: "https://spacearchitect.org/pubs/NASA-CP-97-206241-Cohen.pdf",
+      category: "Documentation"
+    },
+    {
+      id: "9",
+      title: "A Tool for Automated Design and Evaluation of Habitat Interior Layouts",
+      description: "M. Simon and A. Wilhite. Proceedings of AIAA SPACE 2013: Example of an interior design evaluation method for space habitats.",
+      type: "document",
+      url: "https://ntrs.nasa.gov/api/citations/20140002738/downloads/20140002738.pdf",
+      category: "Documentation"
+    },
+    {
+      id: "7",
+      title: "Assets",
+      description: "By Tilin Coding 2",
+      type: "link",
+      url: "https://drive.google.com/drive/folders/1280Zgb425-x12PHiyvnskU92G-zbnqfg?usp=sharing",
+      category: "Our Work"
     },
     {
       id: "2",
@@ -129,6 +153,7 @@ export default function ResourcesPage() {
       musicPath: "/music/the-signal.wav",
       category: "Music"
     },
+
   ]
 
   const getIcon = (type: Resource["type"]) => {
@@ -228,7 +253,7 @@ export default function ResourcesPage() {
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Resources</h1>
             <p className="text-xl text-gray-300">
-              Educational material and references on space habitats
+              Educational material and references
             </p>
           </div>
 

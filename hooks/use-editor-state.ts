@@ -20,6 +20,7 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-014", name: "trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
   { id: "item-015", name: "toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
   { id: "item-016", name: "closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
+  { id: "item-017", name: "kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
 
 ];
 

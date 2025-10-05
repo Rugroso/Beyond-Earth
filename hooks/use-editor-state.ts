@@ -16,14 +16,11 @@ const INITIAL_ITEMS: ToolbarItemType[] = [
   { id: "item-010", name: "shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
   { id: "item-011", name: "handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
   { id: "item-012", name: "refri", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
-  {
-    id: "item-013",
-    name: "Trampoline",
-    shape: "image",
-    imagePath: "/images/Trampoline.png",
-    limit: 10,
-    category: "miscellaneous"
-  }
+  { id: "item-013", name: "medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10, category: "basics" },
+  { id: "item-014", name: "trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
+  { id: "item-015", name: "toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
+  { id: "item-016", name: "closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
+
 ];
 
 const DEFAULT_SIZE = 140;

@@ -4,14 +4,15 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { Howl } from "howler"
-import { ExternalLink, FileText, Video, Image, Link as LinkIcon } from "lucide-react"
+import { ExternalLink, FileText, Video, Image, Link as LinkIcon, Music, Play } from "lucide-react"
 
 interface Resource {
   id: string
   title: string
   description: string
-  type: "document" | "video" | "image" | "link"
-  url: string
+  type: "document" | "video" | "image" | "link" | "info" | "music"
+  url?: string
+  musicPath?: string
   category: string
 }
 
@@ -21,6 +22,7 @@ export default function ResourcesPage() {
   const buttonSoundRef = useRef<Howl | null>(null)
   const hoverSoundRef = useRef<Howl | null>(null)
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
+  const [currentPlaying, setCurrentPlaying] = useState<string | null>(null)
 
   useEffect(() => {
     // Generate random stars
@@ -42,7 +44,7 @@ export default function ResourcesPage() {
     // Initialize hover sound
     hoverSoundRef.current = new Howl({
       src: ['/sounds/button.mp3'],
-      volume: 1.0,
+      volume: 0.1,
     })
 
     // Initialize background music
@@ -58,7 +60,7 @@ export default function ResourcesPage() {
       },
       onplay: () => {
         if (backgroundMusicRef.current) {
-          backgroundMusicRef.current.fade(0, 0.3, 0)
+          backgroundMusicRef.current.fade(0, 0.3, 2000)
         }
       },
       onend: () => {
@@ -67,6 +69,8 @@ export default function ResourcesPage() {
         }
       }
     })
+
+    setCurrentPlaying("6")
 
     return () => {
       if (backgroundMusicRef.current) {
@@ -80,28 +84,51 @@ export default function ResourcesPage() {
     {
       id: "1",
       title: "NASA Space Habitat Design Guidelines",
-      description: "Guía oficial de NASA sobre diseño de hábitats espaciales",
+      description: "Official NASA guide on space habitat design",
       type: "document",
-      url: "#",
-      category: "Documentación"
+      url: "https://www.nasa.gov/",
+      category: "Documentation"
     },
     {
       id: "2",
-      title: "Artemis Program Overview",
-      description: "Información sobre el programa Artemis de NASA",
-      type: "link",
-      url: "#",
-      category: "Música"
+      title: "Arrival",
+      description: "By Enzo Gianola",
+      type: "music",
+      musicPath: "/music/arrival.wav",
+      category: "Music"
     },
-        {
+    {
       id: "3",
-      title: "Artemis Program Overview",
-      description: "Información sobre el programa Artemis de NASA",
-      type: "link",
-      url: "#",
-      category: "Música"
+      title: "Azzézì Nebula View",
+      description: "By Thomas Van Den Bos",
+      type: "music",
+      musicPath: "/music/azzezi-nebula-view.wav",
+      category: "Music"
     },
-    // Agrega más recursos aquí
+    {
+      id: "4",
+      title: "Deep Sea",
+      description: "By Enzo Gianola",
+      type: "music",
+      musicPath: "/music/deep-sea.wav",
+      category: "Music"
+    },
+    {
+      id: "5",
+      title: "Orbit",
+      description: "By Enzo Gianola",
+      type: "music",
+      musicPath: "/music/orbit.wav",
+      category: "Music"
+    },
+    {
+      id: "6",
+      title: "The Signal",
+      description: "By Enzo Gianola",
+      type: "music",
+      musicPath: "/music/the-signal.wav",
+      category: "Music"
+    },
   ]
 
   const getIcon = (type: Resource["type"]) => {
@@ -114,6 +141,10 @@ export default function ResourcesPage() {
         return <Image className="h-5 w-5" />
       case "link":
         return <LinkIcon className="h-5 w-5" />
+      case "info":
+        return <FileText className="h-5 w-5" />
+      case "music":
+        return <Music className="h-5 w-5" />
     }
   }
 
@@ -129,6 +160,42 @@ export default function ResourcesPage() {
   const handleResourceHover = () => {
     if (hoverSoundRef.current) {
       hoverSoundRef.current.play()
+    }
+  }
+
+  const handleMusicClick = (resource: Resource) => {
+    if (resource.type !== "music" || !resource.musicPath) return
+
+    if (buttonSoundRef.current) {
+      buttonSoundRef.current.play()
+    }
+
+    // Si ya está sonando esta canción, no hacer nada
+    if (currentPlaying === resource.id) return
+
+    // Detener la música actual y cargar la nueva
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.fade(0.3, 0, 500)
+      setTimeout(() => {
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.unload()
+        }
+
+        // Cargar nueva música
+        backgroundMusicRef.current = new Howl({
+          src: [resource.musicPath!],
+          loop: true,
+          volume: 0,
+          autoplay: true,
+          onplay: () => {
+            if (backgroundMusicRef.current) {
+              backgroundMusicRef.current.fade(0, 0.3, 2000)
+            }
+          }
+        })
+
+        setCurrentPlaying(resource.id)
+      }, 500)
     }
   }
 
@@ -159,9 +226,9 @@ export default function ResourcesPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-white mb-4">Recursos</h1>
+            <h1 className="text-5xl font-bold text-white mb-4">Resources</h1>
             <p className="text-xl text-gray-300">
-              Material educativo y referencias sobre hábitats espaciales
+              Educational material and references on space habitats
             </p>
           </div>
 
@@ -172,7 +239,7 @@ export default function ResourcesPage() {
             variant="outline"
             className="mb-8 border-white/30 text-black hover:bg-white/10"
           >
-            ← Volver al inicio
+            ← Back to Home
           </Button>
 
           {/* Resources by Category */}
@@ -183,31 +250,50 @@ export default function ResourcesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {resources
                     .filter((r) => r.category === category)
-                    .map((resource) => (
-                      <a
-                        key={resource.id}
-                        href={resource.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onMouseEnter={handleResourceHover}
-                        className="group bg-slate-900/80 backdrop-blur-sm border-2 border-white/20 rounded-lg p-6 hover:border-blue-400 transition-all hover:scale-105 cursor-pointer"
-                      >
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className="text-blue-400 mt-1">
-                            {getIcon(resource.type)}
+                    .map((resource) => {
+                      const isClickable = resource.type !== "info" && resource.type !== "music" && resource.url
+                      const isMusic = resource.type === "music"
+                      const Component = isClickable ? "a" : "div"
+                      const isCurrentlyPlaying = currentPlaying === resource.id
+                      
+                      return (
+                        <Component
+                          key={resource.id}
+                          {...(isClickable ? {
+                            href: resource.url,
+                            target: "_blank",
+                            rel: "noopener noreferrer"
+                          } : {})}
+                          {...(isMusic ? {
+                            onClick: () => handleMusicClick(resource)
+                          } : {})}
+                          onMouseEnter={handleResourceHover}
+                          className={`group bg-slate-900/80 backdrop-blur-sm border-2 ${isCurrentlyPlaying ? 'border-green-400' : 'border-white/20'} rounded-lg p-6 hover:border-blue-400 transition-all hover:scale-105 cursor-pointer`}
+                        >
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className={`${isCurrentlyPlaying ? 'text-green-400' : 'text-blue-400'} mt-1`}>
+                              {getIcon(resource.type)}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className={`text-lg font-semibold ${isCurrentlyPlaying ? 'text-green-400' : 'text-white'} mb-2 group-hover:text-blue-400 transition-colors`}>
+                                {resource.title}
+                              </h3>
+                              <p className="text-sm text-gray-400">
+                                {resource.description}
+                              </p>
+                            </div>
+                            {isClickable && (
+                              <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-colors" />
+                            )}
+                            {isMusic && isCurrentlyPlaying && (
+                              <div className="text-green-400">
+                                <Play className="h-4 w-4 animate-pulse" fill="currentColor" />
+                              </div>
+                            )}
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                              {resource.title}
-                            </h3>
-                            <p className="text-sm text-gray-400">
-                              {resource.description}
-                            </p>
-                          </div>
-                          <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-colors" />
-                        </div>
-                      </a>
-                    ))}
+                        </Component>
+                      )
+                    })}
                 </div>
               </div>
             ))}
@@ -217,10 +303,10 @@ export default function ResourcesPage() {
           {resources.length === 0 && (
             <div className="text-center py-16">
               <h3 className="text-2xl font-bold text-white mb-2">
-                Recursos próximamente
+                Resources coming soon
               </h3>
               <p className="text-gray-400">
-                Estamos preparando material educativo increíble sobre hábitats espaciales
+                We are preparing incredible educational material about space habitats
               </p>
             </div>
           )}

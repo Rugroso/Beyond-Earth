@@ -4,24 +4,143 @@ import { useState, useCallback, useEffect } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Comida", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
-  { id: "item-002", name: "Silla", shape: "image", imagePath: "/images/silla.png", limit: 10, category: "basics" },
-  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10, category: "basics" },
-  { id: "item-004", name: "Retrete", shape: "image", imagePath: "/images/toilet.png", limit: 10, category: "basics" },
-  { id: "item-005", name: "Café", shape: "image", imagePath: "/images/coffee.png", limit: 10, category: "basics" },
-  { id: "item-006", name: "Cartas", shape: "image", imagePath: "/images/cards.png", limit: 10, category: "entertainment" },
-  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10, category: "basics" },
-  { id: "item-008", name: "tv", shape: "image", imagePath: "/images/tv.png", limit: 10, category: "entertainment" },
-  { id: "item-009", name: "labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10, category: "miscellaneous" },
-  { id: "item-010", name: "shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
-  { id: "item-011", name: "handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
-  { id: "item-012", name: "refri", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
-  { id: "item-013", name: "medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10, category: "basics" },
-  { id: "item-014", name: "trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
-  { id: "item-015", name: "toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
-  { id: "item-016", name: "closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
-  { id: "item-017", name: "kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
-
+  {
+    id: "item-001",
+    name: "Comida",
+    shape: "image",
+    imagePath: "/images/food.png",
+    limit: 10,
+    minRequired: 2,
+    category: "basics"
+  },
+  {
+    id: "item-002",
+    name: "Silla",
+    shape: "image",
+    imagePath: "/images/silla.png",
+    limit: 10,
+    minRequired: 4,
+    category: "basics"
+  },
+  { id: "item-003", name: "Mesa", shape: "image", imagePath: "/images/table.png", limit: 10, minRequired: 1, category: "basics" },
+  {
+    id: "item-004",
+    name: "Retrete",
+    shape: "image",
+    imagePath: "/images/toilet.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-005",
+    name: "Café",
+    shape: "image",
+    imagePath: "/images/coffee.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-006",
+    name: "Cartas",
+    shape: "image",
+    imagePath: "/images/cards.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  { id: "item-007", name: "Cama", shape: "image", imagePath: "/images/bed.png", limit: 10, minRequired: 3, category: "basics" },
+  {
+    id: "item-008",
+    name: "tv",
+    shape: "image",
+    imagePath: "/images/tv.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-009",
+    name: "labubu",
+    shape: "image",
+    imagePath: "/images/labubu.png",
+    limit: 10,
+    minRequired: 0,
+    category: "miscellaneous"
+  },
+  {
+    id: "item-010",
+    name: "shower",
+    shape: "image",
+    imagePath: "/images/shower.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-011",
+    name: "handwash",
+    shape: "image",
+    imagePath: "/images/handwash.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-012",
+    name: "refri",
+    shape: "image",
+    imagePath: "/images/refri.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-013",
+    name: "medkit",
+    shape: "image",
+    imagePath: "/images/medkit.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-014",
+    name: "trashcan",
+    shape: "image",
+    imagePath: "/images/trashcan.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-015",
+    name: "toolbox",
+    shape: "image",
+    imagePath: "/images/toolbox.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-016",
+    name: "closet",
+    shape: "image",
+    imagePath: "/images/closet.png",
+    limit: 10,
+    minRequired: 2,
+    category: "basics"
+  },
+  {
+    id: "item-017",
+    name: "kitchen",
+    shape: "image",
+    imagePath: "/images/kitchen.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  }
 ];
 
 const DEFAULT_SIZE = 140;
@@ -216,6 +335,26 @@ export function useEditorState() {
     };
   }, [placedItems, selectedItemIds, deleteSelectedItems, clearSelection]);
 
+  const getRequirementsStatus = useCallback(() => {
+    return availableItems
+      .filter((item) => item.minRequired > 0) // Solo items con requirements
+      .map((item) => {
+        const current = getItemCountOnCanvas(item.id);
+        return {
+          itemId: item.id,
+          name: item.name,
+          current,
+          required: item.minRequired,
+          isMet: current >= item.minRequired
+        };
+      });
+  }, [availableItems, getItemCountOnCanvas]);
+
+  const areRequirementsMet = useCallback(() => {
+    const status = getRequirementsStatus();
+    return status.every((req) => req.isMet);
+  }, [getRequirementsStatus]);
+
   return {
     availableItems,
     placedItems,
@@ -234,6 +373,8 @@ export function useEditorState() {
     bringToFront,
     sendToBack,
     bringForward,
-    sendBackward
+    sendBackward,
+    getRequirementsStatus,
+    areRequirementsMet
   };
 }

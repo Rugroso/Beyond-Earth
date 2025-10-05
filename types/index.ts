@@ -3,8 +3,9 @@ export type ItemCategory = "basics" | "entertainment" | "miscellaneous";
 export interface ToolbarItemType {
   id: string;
   name: string;
-  shape: "triangle" | "square" | "circle" | "image";
+  shape: "image";
   limit: number;
+  minRequired: number; // Minimum required items for base requirements
   category: ItemCategory;
   imagePath?: string; // Path to the image if shape is "image"
 }
@@ -18,6 +19,14 @@ export interface PlacedItemType {
   };
   size: number; // Size in pixels (base: 80, min: 50, max: 200)
   zIndex: number; // Layer order (higher = on top)
+}
+
+export interface RequirementStatus {
+  itemId: string;
+  name: string;
+  current: number;
+  required: number;
+  isMet: boolean;
 }
 
 export interface EditorContextType {
@@ -39,4 +48,6 @@ export interface EditorContextType {
   sendToBack: (instanceIds: string[]) => void;
   bringForward: (instanceIds: string[]) => void;
   sendBackward: (instanceIds: string[]) => void;
+  getRequirementsStatus: () => RequirementStatus[];
+  areRequirementsMet: () => boolean;
 }

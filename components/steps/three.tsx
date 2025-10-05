@@ -5,7 +5,6 @@ export function StepThree() {
       <p className="text-xl text-gray-300 text-center max-w-2xl">
         ¡Estás listo para comenzar tu misión! Explora el universo.
       </p>
-      {/* Aquí irán las imágenes y otros componentes */}
     </div>
   )
 }

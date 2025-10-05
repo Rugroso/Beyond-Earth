@@ -6,10 +6,12 @@ import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
 import { EditControls } from "@/components/edit-controls"
-import { Edit3, Eye, Download, Loader2 } from "lucide-react"
+import { Edit3, Eye, Download, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { useCanvasCapture } from "@/hooks/use-canvas-capture"
 import { useToast } from "@/hooks/use-toast"
 import { Howl } from "howler"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Badge } from "@/components/ui/badge"
 
 export default function GamePage() {
   const context = useContext(EditorContext)
@@ -51,7 +53,12 @@ export default function GamePage() {
 
   if (!context) return null
 
-  const { isEditMode, setIsEditMode } = context
+  const { isEditMode, setIsEditMode, getRequirementsStatus, areRequirementsMet } = context
+
+  const requirementsStatus = getRequirementsStatus()
+  const allRequirementsMet = areRequirementsMet()
+  const metCount = requirementsStatus.filter(req => req.isMet).length
+  const totalCount = requirementsStatus.length
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -98,9 +105,70 @@ export default function GamePage() {
       {/* Navigation Bar */}
       <header className="relative z-10 flex-shrink-0 border-b border-white/10 bg-slate-900/50 backdrop-blur-sm px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-medium text-white">
-            {isEditMode ? "Editando" : "Vista previa"}
-          </h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-medium text-white">
+              {isEditMode ? "Editando" : "Vista previa"}
+            </h1>
+
+            {/* Requirements Indicator */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`gap-2 ${allRequirementsMet ? 'border-green-500/50 bg-green-950/30 hover:bg-green-950/50' : 'border-orange-500/50 bg-orange-950/30 hover:bg-orange-950/50'}`}
+                >
+                  {allRequirementsMet ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-orange-400" />
+                  )}
+                  <span className="text-sm">
+                    Requirements: {metCount}/{totalCount}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 bg-slate-900 border-slate-700">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-white">Base Requirements</h3>
+                    <Badge variant={allRequirementsMet ? "default" : "destructive"}>
+                      {allRequirementsMet ? "Complete" : "Incomplete"}
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {requirementsStatus.map((req) => (
+                      <div
+                        key={req.itemId}
+                        className={`flex items-center justify-between p-2 rounded ${req.isMet ? 'bg-green-950/30 border border-green-800/30' : 'bg-slate-800/50 border border-slate-700/50'
+                          }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {req.isMet ? (
+                            <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-orange-400 flex-shrink-0" />
+                          )}
+                          <span className="text-sm text-white">{req.name}</span>
+                        </div>
+                        <span className={`text-sm font-mono ${req.isMet ? 'text-green-400' : 'text-orange-400'}`}>
+                          {req.current}/{req.required}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {!allRequirementsMet && (
+                    <p className="text-xs text-slate-400 pt-2 border-t border-slate-700">
+                      Complete all requirements to export your base design
+                    </p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+
           <div className="flex items-center gap-2">
             {/* Edit Controls - Solo visible cuando hay selección */}
             <EditControls />

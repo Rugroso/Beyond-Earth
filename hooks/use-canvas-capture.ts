@@ -1,9 +1,39 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { EditorContext } from "@/contexts/editor-context";
 
 export function useCanvasCapture() {
+  const context = useContext(EditorContext);
+
+  const validateRequirements = useCallback(() => {
+    if (!context) return { isValid: false, message: "Context not available" };
+
+    const { areRequirementsMet, getRequirementsStatus } = context;
+
+    if (!areRequirementsMet()) {
+      const status = getRequirementsStatus();
+      const missing = status.filter((req) => !req.isMet);
+      const missingList = missing
+        .map((req) => `${req.name}: ${req.current}/${req.required} (need ${req.required - req.current} more)`)
+        .join("\n");
+
+      return {
+        isValid: false,
+        message: `Cannot export: Missing required items:\n\n${missingList}`
+      };
+    }
+
+    return { isValid: true, message: "" };
+  }, [context]);
+
   const createCanvasFromElement = useCallback(async () => {
+    // Validate requirements before capture
+    const validation = validateRequirements();
+    if (!validation.isValid) {
+      throw new Error(validation.message);
+    }
+
     const canvasElement = document.querySelector('[data-canvas="true"]') as HTMLElement;
     if (!canvasElement) {
       throw new Error("Canvas element not found");
@@ -69,7 +99,7 @@ export function useCanvasCapture() {
     });
 
     return canvas;
-  }, []);
+  }, [validateRequirements]);
 
   const downloadAsImage = useCallback(
     async (fileName = "asset") => {
@@ -90,6 +120,7 @@ export function useCanvasCapture() {
         }, "image/png");
       } catch (error) {
         console.error("Failed to download image:", error);
+        alert(error instanceof Error ? error.message : "Failed to download image");
         throw error;
       }
     },
@@ -102,6 +133,7 @@ export function useCanvasCapture() {
       return canvas.toDataURL("image/png");
     } catch (error) {
       console.error("Failed to get data URL:", error);
+      alert(error instanceof Error ? error.message : "Failed to get data URL");
       throw error;
     }
   }, [createCanvasFromElement]);
@@ -139,6 +171,7 @@ export function useCanvasCapture() {
         return false;
       } catch (error) {
         console.error("Failed to share image:", error);
+        alert(error instanceof Error ? error.message : "Failed to share image");
         throw error;
       }
     },
@@ -148,6 +181,7 @@ export function useCanvasCapture() {
   return {
     downloadAsImage,
     getDataURL,
-    shareImage
+    shareImage,
+    validateRequirements
   };
 }

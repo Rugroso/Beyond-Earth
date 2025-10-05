@@ -10,7 +10,7 @@ export function EditableCanvas() {
   const context = useContext(EditorContext)
   const { scale, viewportRef, contentRef, translateMouseCoordinates, nativeWidth, nativeHeight } = useScaledCanvas()
   const { handleDragOver, handleDrop } = useEditableCanvas({ translateMouseCoordinates })
-
+  
   if (!context) return null
 
   const { placedItems, clearSelection } = context

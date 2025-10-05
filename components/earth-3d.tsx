@@ -15,7 +15,6 @@ function Earth({ onLoaded }: EarthProps) {
   // Load the earth texture using useTexture from drei (better for performance)
   const earthTexture = useTexture("/earth.jpg")
 
-
   return (
     <group position={[0, 0, 0]}>
       <Sphere ref={earthRef} args={[2.5, 64, 64]}>

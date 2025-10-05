@@ -5,30 +5,206 @@ import type { ToolbarItemType, PlacedItemType } from "@/types";
 import { Computer } from "lucide-react";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Food", shape: "image", imagePath: "/images/food.png", limit: 10, category: "basics" },
-  { id: "item-002", name: "Chair", shape: "image", imagePath: "/images/silla.png", limit: 10, category: "basics" },
-  { id: "item-003", name: "Table", shape: "image", imagePath: "/images/table.png", limit: 10, category: "basics" },
-  { id: "item-004", name: "Toilet", shape: "image", imagePath: "/images/toilet.png", limit: 10, category: "basics" },
-  { id: "item-005", name: "Coffee", shape: "image", imagePath: "/images/coffee.png", limit: 10, category: "basics" },
-  { id: "item-006", name: "Cards", shape: "image", imagePath: "/images/cards.png", limit: 10, category: "entertainment" },
-  { id: "item-007", name: "Bed", shape: "image", imagePath: "/images/bed.png", limit: 10, category: "basics" },
-  { id: "item-008", name: "TV", shape: "image", imagePath: "/images/tv.png", limit: 10, category: "entertainment" },
-  { id: "item-009", name: "Labubu", shape: "image", imagePath: "/images/labubu.png", limit: 10, category: "miscellaneous" },
-  { id: "item-010", name: "Shower", shape: "image", imagePath: "/images/shower.png", limit: 10, category: "basics" },
-  { id: "item-011", name: "Handwash", shape: "image", imagePath: "/images/handwash.png", limit: 10, category: "basics" },
-  { id: "item-012", name: "Fridge", shape: "image", imagePath: "/images/refri.png", limit: 10, category: "basics" },
-  { id: "item-013", name: "Medkit", shape: "image", imagePath: "/images/medkit.png", limit: 10, category: "basics" },
-  { id: "item-014", name: "Trashcan", shape: "image", imagePath: "/images/trashcan.png", limit: 10, category: "basics" },
-  { id: "item-015", name: "Toolbox", shape: "image", imagePath: "/images/toolbox.png", limit: 10, category: "basics" },
-  { id: "item-016", name: "Closet", shape: "image", imagePath: "/images/closet.png", limit: 10, category: "basics" },
-  { id: "item-017", name: "Kitchen", shape: "image", imagePath: "/images/kitchen.png", limit: 10, category: "basics" },
-  { id: "item-018", name: "Speaker", shape: "image", imagePath: "/images/speaker.png", limit: 10, category: "entertainment" },
-  { id: "item-019", name: "Treadmill", shape: "image", imagePath: "/images/caminadora.png", limit: 10, category: "basics" },
-  { id: "item-020", name: "Weights", shape: "image", imagePath: "/images/pesa.png", limit: 10, category: "basics" },
-  { id: "item-021", name: "Computer", shape: "image", imagePath: "/images/computer.png", limit: 10, category: "entertainment" },
-  { id: "item-022", name: "Radio", shape: "image", imagePath: "/images/radio.png", limit: 10, category: "miscellaneous" },
-  { id: "item-023", name: "Solar Battery", shape: "image", imagePath: "/images/solar_battery.png", limit: 5, category: "basics" },
-  { id: "item-024", name: "Clean Kit", shape: "image", imagePath: "/images/clean_kit.png", limit: 5, category: "basics" }
+  { id: "item-001", name: "Food", shape: "image", imagePath: "/images/food.png", limit: 10, minRequired: 2, category: "basics" },
+  {
+    id: "item-002",
+    name: "Chair",
+    shape: "image",
+    imagePath: "/images/silla.png",
+    limit: 10,
+    minRequired: 4,
+    category: "basics"
+  },
+  {
+    id: "item-003",
+    name: "Table",
+    shape: "image",
+    imagePath: "/images/table.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-004",
+    name: "Toilet",
+    shape: "image",
+    imagePath: "/images/toilet.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-005",
+    name: "Coffee",
+    shape: "image",
+    imagePath: "/images/coffee.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-006",
+    name: "Cards",
+    shape: "image",
+    imagePath: "/images/cards.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  { id: "item-007", name: "Bed", shape: "image", imagePath: "/images/bed.png", limit: 10, minRequired: 3, category: "basics" },
+  {
+    id: "item-008",
+    name: "TV",
+    shape: "image",
+    imagePath: "/images/tv.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-009",
+    name: "Labubu",
+    shape: "image",
+    imagePath: "/images/labubu.png",
+    limit: 10,
+    minRequired: 0,
+    category: "miscellaneous"
+  },
+  {
+    id: "item-010",
+    name: "Shower",
+    shape: "image",
+    imagePath: "/images/shower.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-011",
+    name: "Handwash",
+    shape: "image",
+    imagePath: "/images/handwash.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-012",
+    name: "Fridge",
+    shape: "image",
+    imagePath: "/images/refri.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-013",
+    name: "Medkit",
+    shape: "image",
+    imagePath: "/images/medkit.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-014",
+    name: "Trashcan",
+    shape: "image",
+    imagePath: "/images/trashcan.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-015",
+    name: "Toolbox",
+    shape: "image",
+    imagePath: "/images/toolbox.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-016",
+    name: "Closet",
+    shape: "image",
+    imagePath: "/images/closet.png",
+    limit: 10,
+    minRequired: 2,
+    category: "basics"
+  },
+  {
+    id: "item-017",
+    name: "Kitchen",
+    shape: "image",
+    imagePath: "/images/kitchen.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-018",
+    name: "Speaker",
+    shape: "image",
+    imagePath: "/images/speaker.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-019",
+    name: "Treadmill",
+    shape: "image",
+    imagePath: "/images/caminadora.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-020",
+    name: "Weights",
+    shape: "image",
+    imagePath: "/images/pesa.png",
+    limit: 10,
+    minRequired: 1,
+    category: "basics"
+  },
+  {
+    id: "item-021",
+    name: "Computer",
+    shape: "image",
+    imagePath: "/images/computer.png",
+    limit: 10,
+    minRequired: 0,
+    category: "entertainment"
+  },
+  {
+    id: "item-022",
+    name: "Radio",
+    shape: "image",
+    imagePath: "/images/radio.png",
+    limit: 10,
+    minRequired: 0,
+    category: "miscellaneous"
+  },
+  {
+    id: "item-023",
+    name: "Solar Battery",
+    shape: "image",
+    imagePath: "/images/solar_battery.png",
+    limit: 5,
+    minRequired: 2,
+    category: "basics"
+  },
+  {
+    id: "item-024",
+    name: "Clean Kit",
+    shape: "image",
+    imagePath: "/images/clean_kit.png",
+    limit: 5,
+    minRequired: 1,
+    category: "basics"
+  }
 ];
 
 const DEFAULT_SIZE = 140;
@@ -36,7 +212,7 @@ const MIN_SIZE = 50;
 const MAX_SIZE = 400;
 
 export function useEditorState() {
-  const [availableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
+  const [availableItems, setAvailableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
   const [placedItems, setPlacedItems] = useState<PlacedItemType[]>([]);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [isEditMode, setIsEditMode] = useState<boolean>(true);
@@ -223,6 +399,41 @@ export function useEditorState() {
     };
   }, [placedItems, selectedItemIds, deleteSelectedItems, clearSelection]);
 
+  const getRequirementsStatus = useCallback(() => {
+    return availableItems
+      .filter((item) => item.minRequired > 0) // Solo items con requirements
+      .map((item) => {
+        const current = getItemCountOnCanvas(item.id);
+        return {
+          itemId: item.id,
+          name: item.name,
+          current,
+          required: item.minRequired,
+          isMet: current >= item.minRequired
+        };
+      });
+  }, [availableItems, getItemCountOnCanvas]);
+
+  const areRequirementsMet = useCallback(() => {
+    const status = getRequirementsStatus();
+    return status.every((req) => req.isMet);
+  }, [getRequirementsStatus]);
+
+  const addCustomAsset = useCallback((name: string, imageDataUrl: string) => {
+    const timestamp = Date.now();
+    const newAsset: ToolbarItemType = {
+      id: `custom-${timestamp}`,
+      name: name,
+      shape: "image",
+      imagePath: imageDataUrl, // Using data URL directly
+      limit: 15,
+      minRequired: 0,
+      category: "miscellaneous"
+    };
+
+    setAvailableItems((prev) => [...prev, newAsset]);
+  }, []);
+
   return {
     availableItems,
     placedItems,
@@ -241,6 +452,9 @@ export function useEditorState() {
     bringToFront,
     sendToBack,
     bringForward,
-    sendBackward
+    sendBackward,
+    getRequirementsStatus,
+    areRequirementsMet,
+    addCustomAsset
   };
 }

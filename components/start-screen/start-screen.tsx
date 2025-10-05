@@ -121,7 +121,7 @@ export function StartScreen() {
               BEYOND EARTH
             </h1>
             <p className="text-xl text-blue-200/80">
-              Embark on your cosmic journey
+              Your Home Beyond
             </p>
           </div>
           <Button
@@ -133,13 +133,13 @@ export function StartScreen() {
             START MISSION
           </Button>
 
-        <Button
-            onClick={() => handleStart("/asset-creator")}
+          <Button
+            onClick={() => handleStart("/minigames")}
             onMouseEnter={playHoverSound}
             size="lg"
             className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
         >
-            CREATE YOUR OWN ASSET
+            MINIGAMES
         </Button>
 
         <Button
@@ -151,14 +151,6 @@ export function StartScreen() {
             SEE RESOURCES
         </Button>
 
-        <Button
-            onClick={() => handleStart("/minigames")}
-            onMouseEnter={playHoverSound}
-            size="lg"
-            className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
-        >
-            MINIGAMES
-        </Button>
         </div>
         </div>
 

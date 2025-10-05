@@ -1,17 +1,26 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useContext } from "react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Howl } from "howler"
+import { EditorContext } from "@/contexts/editor-context"
+import { useToast } from "@/hooks/use-toast"
+import { X, Plus, Download } from "lucide-react"
 
-export function DrawingCanvas() {
+interface DrawingCanvasProps {
+  onClose?: () => void;
+}
+
+export function DrawingCanvas({ onClose }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [color, setColor] = useState("#ffffff")
   const [brushSize, setBrushSize] = useState(5)
   const [tool, setTool] = useState<"brush" | "eraser">("brush")
   const backgroundMusicRef = useRef<Howl | null>(null)
+  const editorContext = useContext(EditorContext)
+  const { toast } = useToast()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -76,8 +85,14 @@ export function DrawingCanvas() {
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    
+    // Calculate the scale factor between the canvas internal size and displayed size
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    
+    // Get mouse position relative to canvas and scale it
+    const x = (e.clientX - rect.left) * scaleX
+    const y = (e.clientY - rect.top) * scaleY
 
     ctx.lineWidth = brushSize
     ctx.lineCap = "round"
@@ -105,21 +120,58 @@ export function DrawingCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
-  const saveAsset = () => {
+  const addToAssets = () => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    // Convert canvas to PNG
+    // Convert canvas to data URL
+    const imageDataUrl = canvas.toDataURL("image/png")
+    const timestamp = new Date().getTime()
+    const assetName = `Drawing-${timestamp}`
+
+    // Add to editor context if available
+    if (editorContext) {
+      editorContext.addCustomAsset(assetName, imageDataUrl)
+      toast({
+        title: "✨ Asset agregado",
+        description: `${assetName} ahora está disponible en Miscellaneous`,
+      })
+
+      // Clear canvas after adding
+      clearCanvas()
+
+      // Close modal if onClose is provided
+      if (onClose) {
+        onClose()
+      }
+    } else {
+      toast({
+        title: "Error",
+        description: "No se pudo agregar el asset. Editor context no disponible.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const downloadPNG = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
     canvas.toBlob((blob) => {
       if (!blob) return
 
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       const timestamp = new Date().getTime()
-      link.download = `asset-${timestamp}.png`
+      link.download = `drawing-${timestamp}.png`
       link.href = url
       link.click()
       URL.revokeObjectURL(url)
+
+      toast({
+        title: "📥 PNG descargado",
+        description: "Tu dibujo se ha guardado exitosamente",
+      })
     }, "image/png")
   }
 
@@ -129,15 +181,29 @@ export function DrawingCanvas() {
   ]
 
   return (
-    <div className="flex flex-col gap-4 p-6 bg-slate-900 rounded-lg">
-      <h2 className="text-2xl font-bold text-white">Creador de Assets</h2>
+    <div className="flex flex-col gap-4 bg-slate-900 rounded-lg max-h-[90vh] overflow-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <h2 className="text-2xl font-bold text-white">Creador de Assets</h2>
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="text-white hover:bg-white/10"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        )}
+      </div>
+
       {/* Canvas */}
-      <div className="relative bg-slate-800 rounded-lg p-4 flex items-center justify-center">
+      <div className="relative bg-slate-800 rounded-lg p-4 mx-4 flex items-center justify-center">
         <canvas
           ref={canvasRef}
           width={800}
           height={600}
-          className="border-2 border-white/20 rounded bg-slate-700 cursor-crosshair"
+          className="border-2 border-white/20 rounded bg-slate-700 cursor-crosshair max-w-full"
           onMouseDown={startDrawing}
           onMouseUp={stopDrawing}
           onMouseMove={draw}
@@ -146,7 +212,7 @@ export function DrawingCanvas() {
       </div>
 
       {/* Tools */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center px-4">
         {/* Tool Selection */}
         <div className="flex gap-2">
           <Button
@@ -154,14 +220,14 @@ export function DrawingCanvas() {
             variant={tool === "brush" ? "default" : "outline"}
             className={tool === "brush" ? "bg-blue-600" : ""}
           >
-            🖌️ Pincel
+            Brush
           </Button>
           <Button
             onClick={() => setTool("eraser")}
             variant={tool === "eraser" ? "default" : "outline"}
             className={tool === "eraser" ? "bg-blue-600" : ""}
           >
-            🧹 Borrador
+            Eraser
           </Button>
         </div>
 
@@ -175,43 +241,28 @@ export function DrawingCanvas() {
                 setColor(c)
                 setTool("brush")
               }}
-              className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                color === c && tool === "brush" ? "border-blue-400 scale-110" : "border-white/30"
-              }`}
+              className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${color === c && tool === "brush" ? "border-blue-400 scale-110" : "border-white/30"
+                }`}
               style={{ backgroundColor: c }}
               title={c}
             />
           ))}
           {/* Custom Color Picker */}
-          <div className="relative group">
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => {
-                setColor(e.target.value)
-                setTool("brush")
-              }}
-              className="w-10 h-10 rounded-lg cursor-pointer border-2 border-white/30 hover:border-blue-400 transition-colors"
-              title="Selector de color personalizado"
-            />
-            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Personalizado
-            </span>
-          </div>
-          {/* Current color display */}
-          <div className="flex items-center gap-2 ml-2 px-3 py-1 bg-slate-800 rounded-lg border border-white/20">
-            <span className="text-white text-xs">Actual:</span>
-            <div 
-              className="w-6 h-6 rounded border-2 border-white/30"
-              style={{ backgroundColor: color }}
-            />
-            <span className="text-white text-xs font-mono">{color.toUpperCase()}</span>
-          </div>
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => {
+              setColor(e.target.value)
+              setTool("brush")
+            }}
+            className="w-10 h-10 rounded-lg cursor-pointer border-2 border-white/30 hover:border-blue-400 transition-colors"
+            title="Selector de color personalizado"
+          />
         </div>
 
         {/* Brush Size */}
         <div className="flex gap-2 items-center min-w-[200px]">
-          <span className="text-white text-sm">Tamaño:</span>
+          <span className="text-white text-sm">Size:</span>
           <Slider
             value={[brushSize]}
             onValueChange={(value) => setBrushSize(value[0])}
@@ -222,35 +273,32 @@ export function DrawingCanvas() {
           />
           <span className="text-white text-sm w-8">{brushSize}</span>
         </div>
-
-        {/* Actions */}
-        <div className="flex gap-2 ml-auto">
-          <Button
-            onClick={clearCanvas}
-            variant="outline"
-            className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-          >
-            🗑️ Limpiar
-          </Button>
-          <Button
-            onClick={saveAsset}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            💾 Guardar PNG
-          </Button>
-        </div>
       </div>
 
-      {/* Instructions */}
-      <div className="text-sm text-gray-400 bg-slate-800 p-3 rounded">
-        <p><strong>Instrucciones:</strong></p>
-        <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>Haz clic y arrastra para dibujar en el canvas</li>
-          <li>Selecciona un color de la paleta o usa el selector personalizado</li>
-          <li>Ajusta el tamaño del pincel con el slider</li>
-          <li>Usa el borrador para eliminar partes del dibujo</li>
-          <li>Guarda tu asset en formato PNG transparente</li>
-        </ul>
+      {/* Actions */}
+      <div className="flex gap-2 px-4 pb-4 justify-end">
+        <Button
+          onClick={clearCanvas}
+          variant="outline"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+        >
+          🗑️ Limpiar
+        </Button>
+        <Button
+          onClick={downloadPNG}
+          variant="outline"
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Descargar PNG
+        </Button>
+        <Button
+          onClick={addToAssets}
+          className="bg-green-600 hover:bg-green-700 gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Agregar a Assets
+        </Button>
       </div>
     </div>
   )

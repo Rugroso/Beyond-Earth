@@ -1,19 +1,29 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import { MissionWizard } from "@/components/habitat/wizard/mission-wizard"
-import type { MissionConfig, HabitatConfig } from "@/types"
+import { FunctionalAreasPalette } from "@/components/habitat/functional-areas-palette"
+import { MetricsDashboard } from "@/components/habitat/metrics-dashboard"
+import type { MissionConfigWizard, HabitatConfig, FunctionalAreaType, PlacedZone } from "@/types"
 import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Rocket, Users, Calendar, Box, Ruler, ArrowLeft } from "lucide-react"
+import { Rocket, ArrowLeft, Download, Save } from "lucide-react"
+import { getMinimumArea, FUNCTIONAL_AREA_REQUIREMENTS } from "@/lib/habitat/functional-areas"
+
+// Constants for canvas
+const CANVAS_WIDTH = 1400
+const CANVAS_HEIGHT = 800
+const PIXELS_PER_METER = 20 // Scale: 20 pixels = 1 meter
 
 export default function HabitatDesignerPage() {
   const [showWizard, setShowWizard] = useState(true)
-  const [missionConfig, setMissionConfig] = useState<MissionConfig | null>(null)
+  const [missionConfig, setMissionConfig] = useState<MissionConfigWizard | null>(null)
   const [habitatConfig, setHabitatConfig] = useState<HabitatConfig | null>(null)
+  const [placedZones, setPlacedZones] = useState<PlacedZone[]>([])
+  const [draggedAreaType, setDraggedAreaType] = useState<FunctionalAreaType | null>(null)
+  const canvasRef = useRef<HTMLDivElement>(null)
 
-  const handleWizardComplete = (mission: MissionConfig, habitat: HabitatConfig) => {
+  const handleWizardComplete = (mission: MissionConfigWizard, habitat: HabitatConfig) => {
     setMissionConfig(mission)
     setHabitatConfig(habitat)
     setShowWizard(false)
@@ -24,8 +34,7 @@ export default function HabitatDesignerPage() {
   }
 
   const handleSkipWizard = () => {
-    // Use default configuration
-    const defaultMission: MissionConfig = {
+    const defaultMission: MissionConfigWizard = {
       crewSize: 4,
       durationDays: 180,
       destination: "lunar-surface",
@@ -51,146 +60,268 @@ export default function HabitatDesignerPage() {
     localStorage.setItem('currentHabitat', JSON.stringify(defaultHabitat))
   }
 
+  const handleAreaDragStart = useCallback((areaType: FunctionalAreaType) => {
+    setDraggedAreaType(areaType)
+  }, [])
+
+  const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+  }, [])
+
+  const handleCanvasDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    if (!draggedAreaType || !missionConfig || !canvasRef.current) return
+
+    const rect = canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    // Calculate default dimensions based on requirements
+    const minArea = getMinimumArea(draggedAreaType, missionConfig.crewSize, missionConfig.durationDays)
+    const defaultWidthM = Math.sqrt(minArea * 1.5) // Make it 1.5x minimum for better starting size
+    const defaultHeightM = defaultWidthM
+    const defaultWidth = defaultWidthM * PIXELS_PER_METER
+    const defaultHeight = defaultHeightM * PIXELS_PER_METER
+
+    const newZone: PlacedZone = {
+      instanceId: `zone-${Date.now()}-${Math.random()}`,
+      zoneType: draggedAreaType,
+      position: { x, y },
+      dimensions: { width: defaultWidth, height: defaultHeight },
+      areaM2: (defaultWidth * defaultHeight) / (PIXELS_PER_METER * PIXELS_PER_METER)
+    }
+
+    setPlacedZones(prev => [...prev, newZone])
+    setDraggedAreaType(null)
+  }, [draggedAreaType, missionConfig])
+
+  const handleRemoveZone = useCallback((instanceId: string) => {
+    setPlacedZones(prev => prev.filter(z => z.instanceId !== instanceId))
+  }, [])
+
+  const handleExportDesign = useCallback(() => {
+    if (!missionConfig || !habitatConfig) return
+
+    const designData = {
+      mission: missionConfig,
+      habitat: habitatConfig,
+      zones: placedZones,
+      exportedAt: new Date().toISOString()
+    }
+
+    const blob = new Blob([JSON.stringify(designData, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `habitat-design-${Date.now()}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  }, [missionConfig, habitatConfig, placedZones])
+
   if (showWizard) {
     return <MissionWizard onComplete={handleWizardComplete} onSkip={handleSkipWizard} />
   }
 
-  // Main designer interface (placeholder for now)
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header with Configuration Summary */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => setShowWizard(true)}
-            className="text-blue-300 hover:bg-blue-500/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Reconfigure Mission
-          </Button>
+  if (!missionConfig || !habitatConfig) {
+    return null
+  }
 
-          <Card className="bg-slate-900/50 border-blue-500/30 p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-4">
-                <Rocket className="w-10 h-10 text-blue-400" />
+  // Calculate metrics for dashboard
+  const placedAreas = placedZones.map(zone => ({
+    type: zone.zoneType,
+    area: zone.areaM2,
+    volume: zone.areaM2 * 3 // Assuming 3m ceiling height
+  }))
+
+  const totalArea = placedZones.reduce((sum, zone) => sum + zone.areaM2, 0)
+  const totalVolume = totalArea * 3 // Assuming 3m ceiling height
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 flex flex-col">
+      {/* Header */}
+      <div className="flex-shrink-0 border-b border-blue-500/30 bg-slate-900/50 backdrop-blur-sm">
+        <div className="max-w-[2000px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setShowWizard(true)}
+                className="text-blue-300 hover:bg-blue-500/10"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Reconfigure
+              </Button>
+              <div className="flex items-center gap-3">
+                <Rocket className="w-8 h-8 text-blue-400" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Habitat Designer</h1>
-                  <p className="text-blue-200/60">Design your space habitat interior</p>
+                  <h1 className="text-xl font-bold text-white">Habitat Designer</h1>
+                  <p className="text-xs text-blue-200/60">
+                    {missionConfig.crewSize} crew • {missionConfig.durationDays} days • {habitatConfig.volume.toFixed(0)} m³
+                  </p>
                 </div>
               </div>
+            </div>
 
-              {missionConfig && habitatConfig && (
-                <div className="flex gap-4">
-                  <div className="text-center">
-                    <Users className="w-5 h-5 text-blue-400 mx-auto mb-1" />
-                    <p className="text-xl font-bold text-white">{missionConfig.crewSize}</p>
-                    <p className="text-xs text-blue-200/60">Crew</p>
-                  </div>
-                  <div className="text-center">
-                    <Calendar className="w-5 h-5 text-blue-400 mx-auto mb-1" />
-                    <p className="text-xl font-bold text-white">{missionConfig.durationDays}</p>
-                    <p className="text-xs text-blue-200/60">Days</p>
-                  </div>
-                  <div className="text-center">
-                    <Box className="w-5 h-5 text-blue-400 mx-auto mb-1" />
-                    <p className="text-xl font-bold text-white">{habitatConfig.volume.toFixed(0)}</p>
-                    <p className="text-xs text-blue-200/60">m³</p>
-                  </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportDesign}
+                className="border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-green-500/30 text-green-300 hover:bg-green-500/10"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex min-h-0 max-w-[2000px] mx-auto w-full">
+        {/* Left Sidebar - Functional Areas Palette */}
+        <div className="w-80 flex-shrink-0 border-r border-blue-500/30 bg-slate-900/30 overflow-hidden">
+          <FunctionalAreasPalette
+            crewSize={missionConfig.crewSize}
+            durationDays={missionConfig.durationDays}
+            placedAreas={placedAreas}
+            onAreaDragStart={handleAreaDragStart}
+          />
+        </div>
+
+        {/* Center - Canvas */}
+        <div className="flex-1 p-6 overflow-auto">
+          <Card className="bg-slate-800/50 border-slate-700 p-4 h-full">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-white font-bold text-lg">Design Canvas</h2>
+                <p className="text-blue-200/60 text-sm">Drag functional areas from the left panel onto the canvas</p>
+              </div>
+              <div className="text-xs text-slate-400">
+                Scale: {PIXELS_PER_METER}px = 1m
+              </div>
+            </div>
+
+            {/* Canvas Area */}
+            <div
+              ref={canvasRef}
+              onDragOver={handleCanvasDragOver}
+              onDrop={handleCanvasDrop}
+              className="relative bg-slate-900 rounded-lg border-2 border-dashed border-slate-600 overflow-hidden"
+              style={{
+                width: `${CANVAS_WIDTH}px`,
+                height: `${CANVAS_HEIGHT}px`,
+                backgroundImage: `
+                  linear-gradient(rgba(100, 116, 139, 0.1) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(100, 116, 139, 0.1) 1px, transparent 1px)
+                `,
+                backgroundSize: `${PIXELS_PER_METER}px ${PIXELS_PER_METER}px`
+              }}
+            >
+              {placedZones.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">
+                  Drop functional areas here to start designing your habitat
                 </div>
               )}
+
+              {/* Render placed zones */}
+              {placedZones.map((zone) => {
+                const requirements = FUNCTIONAL_AREA_REQUIREMENTS[zone.zoneType]
+                const minRequired = getMinimumArea(zone.zoneType, missionConfig.crewSize, missionConfig.durationDays)
+                const isCompliant = zone.areaM2 >= minRequired
+
+                return (
+                  <div
+                    key={zone.instanceId}
+                    className="absolute group cursor-move hover:opacity-90 transition-opacity"
+                    style={{
+                      left: `${zone.position.x}px`,
+                      top: `${zone.position.y}px`,
+                      width: `${zone.dimensions.width}px`,
+                      height: `${zone.dimensions.height}px`,
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                  >
+                    <div
+                      className={`w-full h-full rounded-lg border-4 shadow-lg relative ${
+                        isCompliant ? 'border-green-500' : 'border-red-500'
+                      }`}
+                      style={{
+                        backgroundColor: `${requirements.color}40`,
+                        borderLeftWidth: '8px',
+                        borderLeftColor: requirements.color
+                      }}
+                    >
+                      {/* Zone Label */}
+                      <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold text-white">
+                        <span>{requirements.icon}</span>
+                        <span>{zone.zoneType.replace(/-/g, ' ')}</span>
+                      </div>
+
+                      {/* Area Display */}
+                      <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs text-white">
+                        {zone.areaM2.toFixed(1)} m²
+                        {!isCompliant && (
+                          <span className="text-red-400 ml-2">
+                            (need {minRequired.toFixed(1)} m²)
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Delete Button */}
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleRemoveZone(zone.instanceId)}
+                      >
+                        <span className="text-xs">×</span>
+                      </Button>
+
+                      {/* Status Indicator */}
+                      {!isCompliant && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                            TOO SMALL
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Instructions */}
+            <div className="mt-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+              <p className="text-sm text-blue-200/80">
+                <strong>💡 Tips:</strong> Drag functional areas from the left panel onto the canvas. 
+                Green borders = meets requirements, Red borders = too small. 
+                Grid squares = 1m × 1m. Click × to remove an area.
+              </p>
             </div>
           </Card>
         </div>
 
-        {/* Coming Soon Placeholder */}
-        <Card className="bg-slate-900/50 border-blue-500/30 p-12">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="text-6xl mb-6">🚧</div>
-            <h2 className="text-3xl font-bold text-white mb-4">Main Designer Interface Coming Soon!</h2>
-            <p className="text-lg text-blue-200/80 mb-8">
-              The mission configuration wizard is now complete! The next phase will include:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-              <Card className="bg-slate-800/50 border-slate-700 p-6">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <span className="text-2xl">🎨</span> Functional Areas Palette
-                </h3>
-                <ul className="space-y-2 text-sm text-blue-200/80">
-                  <li>• Drag & drop 13 functional areas</li>
-                  <li>• Sleep quarters, hygiene, food prep</li>
-                  <li>• Exercise, medical, workstations</li>
-                  <li>• Real-time NASA validation</li>
-                </ul>
-              </Card>
-
-              <Card className="bg-slate-800/50 border-slate-700 p-6">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <span className="text-2xl">🖼️</span> Interactive Canvas
-                </h3>
-                <ul className="space-y-2 text-sm text-blue-200/80">
-                  <li>• Visual habitat layout designer</li>
-                  <li>• Resizable functional areas</li>
-                  <li>• Grid-based positioning</li>
-                  <li>• Scale: 50px = 1 meter</li>
-                </ul>
-              </Card>
-
-              <Card className="bg-slate-800/50 border-slate-700 p-6">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <span className="text-2xl">✅</span> Validation Panel
-                </h3>
-                <ul className="space-y-2 text-sm text-blue-200/80">
-                  <li>• Green/yellow/red status indicators</li>
-                  <li>• Size compliance checking</li>
-                  <li>• Adjacency rule validation</li>
-                  <li>• Missing area warnings</li>
-                </ul>
-              </Card>
-
-              <Card className="bg-slate-800/50 border-slate-700 p-6">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <span className="text-2xl">📊</span> Metrics Dashboard
-                </h3>
-                <ul className="space-y-2 text-sm text-blue-200/80">
-                  <li>• Total area and volume usage</li>
-                  <li>• Compliance score (0-100)</li>
-                  <li>• Area breakdown charts</li>
-                  <li>• Export to PNG/PDF</li>
-                </ul>
-              </Card>
-            </div>
-
-            {missionConfig && habitatConfig && (
-              <div className="mt-8 pt-8 border-t border-blue-500/30">
-                <h3 className="text-white font-bold mb-4">Your Current Configuration:</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-blue-200/60 mb-1">Destination</p>
-                    <p className="text-white font-semibold capitalize">
-                      {missionConfig.destination.replace(/-/g, ' ')}
-                    </p>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-blue-200/60 mb-1">Habitat Type</p>
-                    <p className="text-white font-semibold capitalize">{habitatConfig.type}</p>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-blue-200/60 mb-1">Shape</p>
-                    <p className="text-white font-semibold capitalize">{habitatConfig.shape}</p>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-blue-200/60 mb-1">Dimensions</p>
-                    <p className="text-white font-semibold">
-                      {habitatConfig.dimensions.width}m × {habitatConfig.dimensions.height}m
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </Card>
+        {/* Right Sidebar - Metrics Dashboard */}
+        <div className="w-80 flex-shrink-0 border-l border-blue-500/30 bg-slate-900/30 overflow-hidden">
+          <MetricsDashboard
+            crewSize={missionConfig.crewSize}
+            durationDays={missionConfig.durationDays}
+            totalArea={habitatConfig.volume}
+            totalVolume={totalVolume}
+            placedAreas={placedAreas}
+          />
+        </div>
       </div>
     </div>
   )

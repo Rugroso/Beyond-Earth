@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import type { MissionConfig, HabitatConfig, Destination, LaunchVehicle, HabitatType, HabitatShape } from "@/types"
+import type { MissionConfigWizard, HabitatConfig, Destination, LaunchVehicle, HabitatType, HabitatShape } from "@/types"
 import { DestinationStep } from "./destination-step"
 import { CrewStep } from "./crew-step"
 import { VehicleStep } from "./vehicle-step"
@@ -14,7 +14,7 @@ import { SummaryStep } from "./summary-step"
 import { Rocket, ArrowLeft, ArrowRight, Check } from "lucide-react"
 
 interface MissionWizardProps {
-  onComplete: (mission: MissionConfig, habitat: HabitatConfig) => void
+  onComplete: (mission: MissionConfigWizard, habitat: HabitatConfig) => void
   onSkip?: () => void
 }
 
@@ -80,7 +80,7 @@ export function MissionWizard({ onComplete, onSkip }: MissionWizardProps) {
   }
 
   const handleComplete = () => {
-    const missionConfig: MissionConfig = {
+    const missionConfig: MissionConfigWizard = {
       crewSize,
       durationDays: duration,
       destination,

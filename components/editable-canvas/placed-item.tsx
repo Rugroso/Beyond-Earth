@@ -5,6 +5,8 @@ import type { PlacedItemType } from "@/types"
 import { EditorContext } from "@/contexts/editor-context"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { FUNCTIONAL_AREA_REQUIREMENTS } from "@/lib/habitat/functional-areas"
+import type { FunctionalAreaType } from "@/types"
 
 interface PlacedItemProps {
   item: PlacedItemType
@@ -24,6 +26,9 @@ export function PlacedItem({ item }: PlacedItemProps) {
   if (!itemDefinition) return null
 
   const { shape } = itemDefinition
+  
+  // Obtener info del área funcional
+  const areaRequirements = FUNCTIONAL_AREA_REQUIREMENTS[item.itemId as FunctionalAreaType]
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -34,7 +39,6 @@ export function PlacedItem({ item }: PlacedItemProps) {
   const handleDragStart = (e: React.MouseEvent) => {
     if (!isEditMode || isResizing) return
 
-    // Don't start dragging if clicking on buttons or resize handle
     const target = e.target as HTMLElement
     if (target.closest('button') || target.closest('[data-resize-handle]')) {
       return
@@ -43,23 +47,19 @@ export function PlacedItem({ item }: PlacedItemProps) {
     e.stopPropagation()
     setIsDragging(true)
 
-    // Get the canvas element (parent container)
     const canvas = document.querySelector('[data-canvas="true"]')
     if (!canvas) return
 
     const canvasRect = canvas.getBoundingClientRect()
 
-    // Calculate offset from mouse to item's current position
     const offsetX = e.clientX - canvasRect.left - item.position.x
     const offsetY = e.clientY - canvasRect.top - item.position.y
     setDragOffset({ x: offsetX, y: offsetY })
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      // Calculate new position relative to canvas
       const newX = moveEvent.clientX - canvasRect.left - offsetX
       const newY = moveEvent.clientY - canvasRect.top - offsetY
 
-      // Update position
       updateItemPosition(item.instanceId, { x: newX, y: newY })
     }
 
@@ -88,9 +88,8 @@ export function PlacedItem({ item }: PlacedItemProps) {
 
       const deltaX = moveEvent.clientX - resizeStartRef.current.mouseX
       const deltaY = moveEvent.clientY - resizeStartRef.current.mouseY
-      const delta = (deltaX + deltaY) / 2 // Average of both axes for diagonal scaling
-
-      const newSize = Math.max(40, resizeStartRef.current.size + delta) // Minimum size of 40px
+      const delta = (deltaX + deltaY) / 2
+      const newSize = Math.max(40, resizeStartRef.current.size + delta)
       updateItemSize(item.instanceId, newSize)
     }
 
@@ -126,41 +125,31 @@ export function PlacedItem({ item }: PlacedItemProps) {
       }}
     >
       <div
-        className={`relative flex items-center justify-center rounded-lg ${isDragging ? "bg-muted/80 shadow-2xl ring-2 ring-primary" : "bg-muted"}`}
+        className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${
+          isDragging ? "bg-slate-700/90 shadow-2xl ring-2 ring-blue-500" : "bg-slate-800/80"
+        }`}
         style={{
           width: `${containerSize}px`,
           height: `${containerSize}px`,
+          borderColor: areaRequirements?.color || "#64748b",
+          borderLeftWidth: "6px",
+          borderLeftColor: areaRequirements?.color
         }}
       >
-        {shape === "triangle" && (
-          <div
-            style={{
-              width: 0,
-              height: 0,
-              borderLeft: `${shapeSize * 0.575}px solid transparent`,
-              borderRight: `${shapeSize * 0.575}px solid transparent`,
-              borderBottom: `${shapeSize}px solid hsl(var(--foreground) / 0.6)`,
-            }}
-          />
+        {/* Icon del área funcional */}
+        {areaRequirements?.icon && (
+          <div className="text-4xl mb-1">{areaRequirements.icon}</div>
         )}
-        {shape === "square" && (
-          <div
-            className="bg-foreground/60 rounded"
-            style={{
-              width: `${shapeSize}px`,
-              height: `${shapeSize}px`,
-            }}
-          />
-        )}
-        {shape === "circle" && (
-          <div
-            className="bg-foreground/60 rounded-full"
-            style={{
-              width: `${shapeSize}px`,
-              height: `${shapeSize}px`,
-            }}
-          />
-        )}
+        
+        {/* Nombre del área */}
+        <span className="text-white text-xs font-semibold text-center px-2 leading-tight">
+          {itemDefinition.name}
+        </span>
+
+        {/* Tamaño en metros */}
+        <div className="mt-1 text-xs text-blue-200/80">
+          {(containerSize / 20).toFixed(1)}m
+        </div>
 
         {isEditMode && !isDragging && (
           <>
@@ -175,7 +164,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
               <X className="h-3 w-3" />
             </Button>
 
-            {/* Resize handle - bottom right corner */}
+            {/* Resize handle */}
             <div
               data-resize-handle="true"
               className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 hover:bg-blue-600 cursor-nwse-resize rounded-br-lg shadow-lg z-10 flex items-end justify-end pointer-events-auto"
@@ -184,7 +173,6 @@ export function PlacedItem({ item }: PlacedItemProps) {
                 clipPath: "polygon(100% 0, 100% 100%, 0 100%)"
               }}
             >
-              {/* Grip lines */}
               <div className="absolute bottom-0.5 right-0.5 flex flex-col gap-0.5 pointer-events-none">
                 <div className="w-2 h-0.5 bg-white/70"></div>
                 <div className="w-1.5 h-0.5 bg-white/70 ml-auto"></div>

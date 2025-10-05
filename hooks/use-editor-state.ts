@@ -2,19 +2,43 @@
 
 import { useState, useCallback } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
+import type { FunctionalAreaType } from "@/types";
+import { FUNCTIONAL_AREA_REQUIREMENTS } from "@/lib/habitat/functional-areas";
 
-const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Componente A", shape: "square", limit: 5 },
-  { id: "item-002", name: "Componente B", shape: "circle", limit: 3 },
-  { id: "item-003", name: "Componente C", shape: "triangle", limit: 2 }
-];
+// Convertir las áreas funcionales de NASA en items para el toolbar
+const createFunctionalAreaItems = (): ToolbarItemType[] => {
+  const areas: FunctionalAreaType[] = [
+    "sleep-quarters",
+    "hygiene-waste", 
+    "food-prep",
+    "exercise",
+    "workstation",
+    "stowage",
+    "medical",
+    "common-area"
+  ];
+
+  return areas.map(area => {
+    const requirements = FUNCTIONAL_AREA_REQUIREMENTS[area];
+    return {
+      id: area,
+      name: area.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      shape: "square" as const, // Todas las áreas funcionales son cuadradas/rectangulares
+      limit: 5, // Límite flexible para permitir múltiples instancias
+      icon: requirements.icon,
+      color: requirements.color
+    };
+  });
+};
+
+const FUNCTIONAL_AREA_ITEMS = createFunctionalAreaItems();
 
 const DEFAULT_SIZE = 140;
 const MIN_SIZE = 50;
 const MAX_SIZE = 400;
 
 export function useEditorState() {
-  const [availableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
+  const [availableItems] = useState<ToolbarItemType[]>(FUNCTIONAL_AREA_ITEMS);
   const [placedItems, setPlacedItems] = useState<PlacedItemType[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(true); // Start in Edit Mode
 
@@ -33,11 +57,20 @@ export function useEditorState() {
       const currentCount = getItemCountOnCanvas(itemId);
       if (currentCount >= item.limit) return;
 
+      // Calcular tamaño basado en área funcional
+      // Para áreas más grandes como common-area, hacer el tamaño inicial más grande
+      let initialSize = DEFAULT_SIZE;
+      if (itemId === "common-area" || itemId === "exercise") {
+        initialSize = 180;
+      } else if (itemId === "sleep-quarters" || itemId === "stowage") {
+        initialSize = 160;
+      }
+
       const newItem: PlacedItemType = {
         instanceId: `${itemId}-${Date.now()}-${Math.random()}`,
         itemId,
         position,
-        size: DEFAULT_SIZE
+        size: initialSize
       };
 
       setPlacedItems((prev) => [...prev, newItem]);

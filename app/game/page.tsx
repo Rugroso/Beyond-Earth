@@ -6,6 +6,7 @@ import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
 import { EditControls } from "@/components/edit-controls"
+import { BackgroundSelector } from "@/components/background-selector"
 import { Edit3, Eye, Download, Loader2, AlertCircle, CheckCircle2, Paintbrush } from "lucide-react"
 import { useCanvasCapture } from "@/hooks/use-canvas-capture"
 import { useToast } from "@/hooks/use-toast"
@@ -194,6 +195,9 @@ export default function GamePage() {
 
             {/* Edit Controls - Solo visible cuando hay selección */}
             <EditControls />
+
+            {/* Background Selector */}
+            <BackgroundSelector />
 
             <Button
               variant="outline"

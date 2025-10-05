@@ -4,9 +4,8 @@ import { useState, useCallback } from "react";
 import type { ToolbarItemType, PlacedItemType } from "@/types";
 
 const INITIAL_ITEMS: ToolbarItemType[] = [
-  { id: "item-001", name: "Componente A", shape: "square", limit: 5 },
-  { id: "item-002", name: "Componente B", shape: "circle", limit: 3 },
-  { id: "item-003", name: "Componente C", shape: "triangle", limit: 2 }
+  { id: "item-004", name: "Comida", shape: "image", imagePath: "/images/food.png", limit: 10 },
+  { id: "item-005", name: "Silla", shape: "image", imagePath: "/images/silla.png", limit: 10 }
 ];
 
 const DEFAULT_SIZE = 140;

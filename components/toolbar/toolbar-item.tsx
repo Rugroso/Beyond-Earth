@@ -27,27 +27,23 @@ export function ToolbarItem({ item }: ToolbarItemProps) {
     event.dataTransfer.setData("itemId", item.id)
   }
 
-  const shapeClasses = {
-    square: "rounded-lg",
-    circle: "rounded-full",
-    triangle: "rounded-lg",
-  }
-
   return (
     <div
       draggable={!isDisabled}
       onDragStart={handleDragStart}
       className={cn(
-        "relative flex h-20 w-20 items-center justify-center bg-muted transition-all",
-        shapeClasses[item.shape],
+        "relative flex h-20 w-20 items-center justify-center bg-muted transition-all rounded-lg",
         isDisabled ? "cursor-not-allowed opacity-40" : "cursor-grab hover:bg-muted/80 active:cursor-grabbing",
       )}
     >
-      {item.shape === "triangle" && (
-        <div className="h-0 w-0 border-b-[40px] border-l-[23px] border-r-[23px] border-b-foreground/60 border-l-transparent border-r-transparent" />
+      {item.shape === "image" && item.imagePath && (
+        <img 
+          src={item.imagePath} 
+          alt={item.name} 
+          className="h-16 w-16 object-contain"
+          draggable={false}
+        />
       )}
-      {item.shape === "square" && <div className="h-10 w-10 bg-foreground/60 rounded" />}
-      {item.shape === "circle" && <div className="h-10 w-10 bg-foreground/60 rounded-full" />}
     </div>
   )
 }

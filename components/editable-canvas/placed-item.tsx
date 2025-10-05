@@ -126,39 +126,22 @@ export function PlacedItem({ item }: PlacedItemProps) {
       }}
     >
       <div
-        className={`relative flex items-center justify-center rounded-lg ${isDragging ? "bg-muted/80 shadow-2xl ring-2 ring-primary" : "bg-muted"}`}
+        className="relative flex items-center justify-center"
         style={{
           width: `${containerSize}px`,
           height: `${containerSize}px`,
         }}
       >
-        {shape === "triangle" && (
-          <div
+        {shape === "image" && itemDefinition.imagePath && (
+          <img 
+            src={itemDefinition.imagePath} 
+            alt={itemDefinition.name}
+            className="object-contain"
             style={{
-              width: 0,
-              height: 0,
-              borderLeft: `${shapeSize * 0.575}px solid transparent`,
-              borderRight: `${shapeSize * 0.575}px solid transparent`,
-              borderBottom: `${shapeSize}px solid hsl(var(--foreground) / 0.6)`,
+              width: `${containerSize * 0.8}px`,
+              height: `${containerSize * 0.8}px`,
             }}
-          />
-        )}
-        {shape === "square" && (
-          <div
-            className="bg-foreground/60 rounded"
-            style={{
-              width: `${shapeSize}px`,
-              height: `${shapeSize}px`,
-            }}
-          />
-        )}
-        {shape === "circle" && (
-          <div
-            className="bg-foreground/60 rounded-full"
-            style={{
-              width: `${shapeSize}px`,
-              height: `${shapeSize}px`,
-            }}
+            draggable={false}
           />
         )}
 

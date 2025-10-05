@@ -1,8 +1,9 @@
 export interface ToolbarItemType {
   id: string;
   name: string;
-  shape: "triangle" | "square" | "circle";
+  shape: "triangle" | "square" | "circle" | "image";
   limit: number;
+  imagePath?: string; // Path to the image if shape is "image"
 }
 
 export interface PlacedItemType {

@@ -39,6 +39,8 @@ export default function CosmicLeaperPage() {
   const [highScore, setHighScore] = useState(0)
   const router = useRouter()
   const backgroundMusicRef = useRef<Howl | null>(null)
+  const rocketImageRef = useRef<HTMLImageElement | null>(null)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   const gameDataRef = useRef<{
     player: Player
@@ -55,6 +57,15 @@ export default function CosmicLeaperPage() {
 
   // Initialize music
   useEffect(() => {
+    // Load rocket image
+    const rocketImg = new Image()
+    rocketImg.onload = () => {
+      setImageLoaded(true)
+      console.log('Rocket image loaded')
+    }
+    rocketImg.src = "/images/cohete.png"
+    rocketImageRef.current = rocketImg
+
     backgroundMusicRef.current = new Howl({
       src: ['/music/the-signal.wav'],
       loop: false, // Manejo manual del loop
@@ -217,21 +228,19 @@ export default function CosmicLeaperPage() {
         ctx.fillRect(p.x, p.y, p.width, p.height)
     })
 
-    // Dibujar jugador (Nave Espacial - Triángulo)
-    // Lógica similar a meteor-dodger
-    ctx.save()
-    ctx.translate(player.x + player.width / 2, player.y + player.height / 2)
-    ctx.fillStyle = "#60a5fa"
-    ctx.beginPath()
-    ctx.moveTo(0, -player.height / 2)
-    ctx.lineTo(-player.width / 2, player.height / 2)
-    ctx.lineTo(player.width / 2, player.height / 2)
-    ctx.closePath()
-    ctx.fill()
-    ctx.strokeStyle = "#3b82f6"
-    ctx.lineWidth = 2
-    ctx.stroke()
-    ctx.restore()
+    // Dibujar jugador (Nave Espacial - Imagen)
+    if (rocketImageRef.current && imageLoaded) {
+      ctx.save()
+      ctx.translate(player.x + player.width / 2, player.y + player.height / 2)
+      ctx.drawImage(
+        rocketImageRef.current,
+        -player.width / 2,
+        -player.height / 2,
+        player.width,
+        player.height
+      )
+      ctx.restore()
+    }
 
 
     // 10. Dibujar score
@@ -289,7 +298,7 @@ export default function CosmicLeaperPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-8">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-6">🚀 Salto Cósmico</h1>
+        <h1 className="text-4xl font-bold text-white mb-6">Salto Cósmico</h1>
 
         {/* Canvas */}
         <div className="relative inline-block">

@@ -1,15 +1,13 @@
 "use client"
 
 import { useContext, useRef, useState } from "react"
-import type { PlacedObject as PlacedObjectType } from "@/types"
+import type { PlacedItemType } from "@/types"
 import { EditorContext } from "@/contexts/editor-context"
-import { getObjectDisplay } from "@/lib/habitat/object-definitions"
-import { OBJECT_DEFINITIONS } from "@/lib/habitat/object-definitions"
-import { X, RotateCw } from "lucide-react"
+import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface PlacedObjectProps {
-  object: PlacedObjectType
+  object: PlacedItemType
 }
 
 export function PlacedObject({ object }: PlacedObjectProps) {
@@ -19,29 +17,15 @@ export function PlacedObject({ object }: PlacedObjectProps) {
 
   if (!context) return null
 
-  const { isEditMode, removeObject, updateObjectPosition, updateObjectRotation } = context
-  const definition = OBJECT_DEFINITIONS[object.objectType]
+  const { isEditMode, removeItemFromCanvas, updateItemPosition, availableItems } = context
+  const itemDefinition = availableItems.find(item => item.id === object.itemId)
 
-  if (!definition) return null
-
-  // Get display (emoji or asset image)
-  const display = getObjectDisplay(object.objectType)
-
-  // Convert meters to pixels (50px = 1m scale)
-  const PIXELS_PER_METER = 50
-  const widthPx = definition.width * PIXELS_PER_METER * object.size
-  const heightPx = definition.height * PIXELS_PER_METER * object.size
+  if (!itemDefinition) return null
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    removeObject(object.instanceId)
-  }
-
-  const handleRotate = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    updateObjectRotation(object.instanceId, (object.rotation + 90) % 360)
+    removeItemFromCanvas(object.instanceId)
   }
 
   const handleDragStart = (e: React.MouseEvent) => {
@@ -80,7 +64,7 @@ export function PlacedObject({ object }: PlacedObjectProps) {
       const newX = dragStartRef.current.objX + nativeDeltaX
       const newY = dragStartRef.current.objY + nativeDeltaY
 
-      updateObjectPosition(object.instanceId, { x: newX, y: newY })
+      updateItemPosition(object.instanceId, { x: newX, y: newY })
     }
 
     const handleMouseUp = () => {
@@ -102,47 +86,38 @@ export function PlacedObject({ object }: PlacedObjectProps) {
       style={{
         left: `${object.position.x}px`,
         top: `${object.position.y}px`,
-        transform: `translate(-50%, -50%) rotate(${object.rotation}deg)`,
+        transform: `translate(-50%, -50%)`,
         transition: isDragging ? "none" : "all 0.2s ease",
         pointerEvents: "auto",
       }}
     >
       <div
         className={`relative flex items-center justify-center rounded-lg border-2 ${isDragging
-            ? "shadow-2xl ring-2 ring-blue-500 bg-white"
-            : "shadow-lg bg-white hover:shadow-xl"
+          ? "shadow-2xl ring-2 ring-blue-500 bg-white"
+          : "shadow-lg bg-white hover:shadow-xl"
           }`}
         style={{
-          width: `${widthPx}px`,
-          height: `${heightPx}px`,
-          borderColor: definition.color,
+          width: `${object.size}px`,
+          height: `${object.size}px`,
+          borderColor: itemDefinition.color || "#3b82f6",
           borderLeftWidth: "4px",
         }}
       >
-        {/* Object Icon or Image */}
+        {/* Object Icon */}
         <div className="text-center pointer-events-none w-full h-full flex items-center justify-center">
-          {display.type === 'image' ? (
-            <img
-              src={display.value}
-              alt={definition.name}
-              className="max-w-full max-h-full object-contain"
-              style={{ width: '90%', height: '90%' }}
-            />
-          ) : (
-            <span
-              className="block"
-              style={{ fontSize: `${Math.min(widthPx, heightPx) * 0.6}px` }}
-            >
-              {display.value}
-            </span>
-          )}
+          <span
+            className="block"
+            style={{ fontSize: `${object.size * 0.5}px` }}
+          >
+            {itemDefinition.icon || "📦"}
+          </span>
         </div>
 
         {/* Object Label */}
         <div
           className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm px-1 py-0.5 text-center text-xs font-semibold text-white pointer-events-none rounded-b-lg"
         >
-          {definition.name}
+          {itemDefinition.name}
         </div>
 
         {isEditMode && !isDragging && (
@@ -156,17 +131,6 @@ export function PlacedObject({ object }: PlacedObjectProps) {
               onMouseDown={(e) => e.stopPropagation()}
             >
               <X className="h-3 w-3" />
-            </Button>
-
-            {/* Rotate button */}
-            <Button
-              variant="secondary"
-              size="icon"
-              className="absolute -top-2 -left-2 h-6 w-6 rounded-full shadow-lg z-10 pointer-events-auto"
-              onClick={handleRotate}
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              <RotateCw className="h-3 w-3" />
             </Button>
           </>
         )}

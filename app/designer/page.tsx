@@ -88,7 +88,7 @@ export default function DesignerPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold text-white">Habitat Designer</h1>
-            
+
             {missionConfig && (
               <div className="flex items-center gap-3">
                 <Badge variant="outline" className="border-blue-400 text-blue-300">

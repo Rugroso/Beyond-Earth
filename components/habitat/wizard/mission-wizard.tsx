@@ -153,10 +153,10 @@ export function MissionWizard({ onComplete, onSkip }: MissionWizardProps) {
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-xl mb-2 transition-all ${index < currentStep
-                    ? 'bg-green-500 text-white'
-                    : index === currentStep
-                      ? 'bg-blue-500 text-white ring-4 ring-blue-500/30'
-                      : 'bg-slate-700 text-slate-400'
+                  ? 'bg-green-500 text-white'
+                  : index === currentStep
+                    ? 'bg-blue-500 text-white ring-4 ring-blue-500/30'
+                    : 'bg-slate-700 text-slate-400'
                   }`}
               >
                 {index < currentStep ? <Check className="w-5 h-5" /> : step.icon}

@@ -33,8 +33,8 @@ export function ToolbarItem({ item }: ToolbarItemProps) {
       className={cn(
         "relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all",
         "hover:scale-105",
-        isDisabled 
-          ? "cursor-not-allowed opacity-40 border-slate-600" 
+        isDisabled
+          ? "cursor-not-allowed opacity-40 border-slate-600"
           : "cursor-grab active:cursor-grabbing border-slate-600 hover:border-blue-400 bg-slate-800/50 hover:bg-slate-700/50"
       )}
       style={{
@@ -46,14 +46,14 @@ export function ToolbarItem({ item }: ToolbarItemProps) {
       {item.icon && (
         <div className="text-3xl mb-1">{item.icon}</div>
       )}
-      
+
       {/* Name */}
       <span className="text-white text-xs font-medium text-center leading-tight">
         {item.name}
       </span>
 
       {/* Counter Badge */}
-      <Badge 
+      <Badge
         variant={count >= item.limit ? "destructive" : "secondary"}
         className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
       >

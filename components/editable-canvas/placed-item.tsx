@@ -26,7 +26,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
   if (!itemDefinition) return null
 
   const { shape } = itemDefinition
-  
+
   // Obtener info del área funcional
   const areaRequirements = FUNCTIONAL_AREA_REQUIREMENTS[item.itemId as FunctionalAreaType]
 
@@ -125,9 +125,8 @@ export function PlacedItem({ item }: PlacedItemProps) {
       }}
     >
       <div
-        className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${
-          isDragging ? "bg-slate-700/90 shadow-2xl ring-2 ring-blue-500" : "bg-slate-800/80"
-        }`}
+        className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${isDragging ? "bg-slate-700/90 shadow-2xl ring-2 ring-blue-500" : "bg-slate-800/80"
+          }`}
         style={{
           width: `${containerSize}px`,
           height: `${containerSize}px`,
@@ -140,7 +139,7 @@ export function PlacedItem({ item }: PlacedItemProps) {
         {areaRequirements?.icon && (
           <div className="text-4xl mb-1">{areaRequirements.icon}</div>
         )}
-        
+
         {/* Nombre del área */}
         <span className="text-white text-xs font-semibold text-center px-2 leading-tight">
           {itemDefinition.name}

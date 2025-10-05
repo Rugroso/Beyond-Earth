@@ -27,7 +27,7 @@ export function Toolbar() {
             <span>Arrastra las áreas al canvas para diseñar tu hábitat</span>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
           {availableItems.map((item) => (
             <ToolbarItem key={item.id} item={item} />

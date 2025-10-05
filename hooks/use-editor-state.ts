@@ -9,7 +9,7 @@ import { FUNCTIONAL_AREA_REQUIREMENTS } from "@/lib/habitat/functional-areas";
 const createFunctionalAreaItems = (): ToolbarItemType[] => {
   const areas: FunctionalAreaType[] = [
     "sleep-quarters",
-    "hygiene-waste", 
+    "hygiene-waste",
     "food-prep",
     "exercise",
     "workstation",
@@ -18,11 +18,14 @@ const createFunctionalAreaItems = (): ToolbarItemType[] => {
     "common-area"
   ];
 
-  return areas.map(area => {
+  return areas.map((area) => {
     const requirements = FUNCTIONAL_AREA_REQUIREMENTS[area];
     return {
       id: area,
-      name: area.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      name: area
+        .split("-")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" "),
       shape: "square" as const, // Todas las áreas funcionales son cuadradas/rectangulares
       limit: 5, // Límite flexible para permitir múltiples instancias
       icon: requirements.icon,

@@ -67,6 +67,7 @@ export default function MinigamesPage() {
       id: "meteor-dodger",
       title: "Esquiva Meteoros",
       description: "Controla tu nave y esquiva los meteoros que caen del espacio",
+      width: 80,
       image_path: "/images/cohete_asteroides.png",
       path: "/minigames/meteor-dodger"
     },
@@ -74,6 +75,7 @@ export default function MinigamesPage() {
       id: "cosmic-leaper",
       title: "Salto Cósmico",
       description: "Salta de plataforma en plataforma para alcanzar el infinito.",
+      width: 120,
       image_path: "/images/Trampoline.png",
       path: "/minigames/cosmic-leaper"
     }
@@ -121,16 +123,16 @@ export default function MinigamesPage() {
           </Button>
 
           {/* Minigames Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ">
             {minigames.map((game) => (
               <div
                 key={game.id}
-                className="bg-slate-900/80 backdrop-blur-sm border-2 border-white/20 rounded-lg p-6 hover:border-blue-400 transition-all hover:scale-105 cursor-pointer"
+                className="bg-slate-900/80 backdrop-blur-sm border-2 border-white/20 rounded-lg p-6 hover:border-blue-400 transition-all hover:scale-105 cursor-pointer items-center justify-center flex flex-col"
                 onClick={() => router.push(game.path)}
                 onMouseEnter={playHoverSound}
               >
                 <div className="flex justify-center">
-                  <img src={game.image_path} alt={game.title} width={80} className="text-center" />
+                  <img src={game.image_path} alt={game.title} width={game.width} className="text-center" />
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2 text-center">{game.title}</h2>
                 <p className="text-gray-300 text-center mb-4">{game.description}</p>

@@ -22,6 +22,9 @@ export default function MeteorDodgerPage() {
   const router = useRouter()
   const backgroundMusicRef = useRef<Howl | null>(null)
   const shootSoundRef = useRef<Howl | null>(null)
+  const rocketImageRef = useRef<HTMLImageElement | null>(null)
+  const asteroidImageRef = useRef<HTMLImageElement | null>(null)
+  const [imagesLoaded, setImagesLoaded] = useState(false)
 
   const gameDataRef = useRef({
     player: { x: 400, y: 500, width: 40, height: 40, speed: 8 },
@@ -33,16 +36,28 @@ export default function MeteorDodgerPage() {
     meteorSpawnRate: 800, // milliseconds
     lastShot: 0,
     shootCooldown: 200, // milliseconds between shots
+    heat: 0, // Heat level (0-100)
+    overheated: false, // Is weapon overheated?
+    lastCooldown: Date.now(), // Last time heat decreased
   })
 
-  const spawnMeteor = useCallback(() => {
-    const size = Math.random() * 30 + 20 // 20-50px
+  const spawnMeteor = useCallback((currentScore: number) => {
+    // Increase meteor size range and speed based on score
+    const difficultyMultiplier = 1 + (currentScore / 500) // Increases every 500 points
+    const minSize = 20
+    const maxSize = 30 + (difficultyMultiplier * 10) // Max size increases with score
+    const size = Math.random() * (maxSize - minSize) + minSize
+    
+    const baseSpeed = 2 + (difficultyMultiplier * 0.5) // Speed increases gradually
+    const speedVariation = 3 + difficultyMultiplier
+    const speed = Math.random() * speedVariation + baseSpeed
+    
     gameDataRef.current.meteors.push({
       x: Math.random() * (800 - size),
       y: -size,
       width: size,
       height: size,
-      speed: Math.random() * 3 + 2, // 2-5 speed
+      speed: Math.min(speed, 10), // Cap maximum speed at 10
       rotation: Math.random() * Math.PI * 2,
     })
   }, [])
@@ -50,6 +65,9 @@ export default function MeteorDodgerPage() {
   const shootBullet = useCallback(() => {
     const now = Date.now()
     const data = gameDataRef.current
+    
+    // Check if overheated
+    if (data.overheated) return
     
     // Check cooldown
     if (now - data.lastShot < data.shootCooldown) return
@@ -68,6 +86,14 @@ export default function MeteorDodgerPage() {
       height: 15,
       speed: 12,
     })
+    
+    // Increase heat by 15 per shot
+    data.heat = Math.min(100, data.heat + 15)
+    
+    // Check if overheated
+    if (data.heat >= 100) {
+      data.overheated = true
+    }
     
     data.lastShot = now
   }, [])
@@ -94,6 +120,18 @@ export default function MeteorDodgerPage() {
     ctx.fillStyle = "#0f172a"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+    // Update heat cooldown system
+    const currentTime = Date.now()
+    if (currentTime - data.lastCooldown > 100) { // Cool down every 100ms
+      data.heat = Math.max(0, data.heat - 2) // Decrease by 2 every 100ms
+      data.lastCooldown = currentTime
+      
+      // Reset overheated when heat drops below 50
+      if (data.overheated && data.heat < 50) {
+        data.overheated = false
+      }
+    }
+
     // Update player position
     if (data.keys["ArrowLeft"] && data.player.x > 0) {
       data.player.x -= data.player.speed
@@ -113,20 +151,19 @@ export default function MeteorDodgerPage() {
       shootBullet()
     }
 
-    // Draw player (spaceship)
-    ctx.save()
-    ctx.translate(data.player.x + data.player.width / 2, data.player.y + data.player.height / 2)
-    ctx.fillStyle = "#60a5fa"
-    ctx.beginPath()
-    ctx.moveTo(0, -data.player.height / 2)
-    ctx.lineTo(-data.player.width / 2, data.player.height / 2)
-    ctx.lineTo(data.player.width / 2, data.player.height / 2)
-    ctx.closePath()
-    ctx.fill()
-    ctx.strokeStyle = "#3b82f6"
-    ctx.lineWidth = 2
-    ctx.stroke()
-    ctx.restore()
+    // Draw player (spaceship with image)
+    if (rocketImageRef.current && imagesLoaded) {
+      ctx.save()
+      ctx.translate(data.player.x + data.player.width / 2, data.player.y + data.player.height / 2)
+      ctx.drawImage(
+        rocketImageRef.current,
+        -data.player.width / 2. ,
+        -data.player.height / 2  ,
+        data.player.width,
+        data.player.height
+      )
+      ctx.restore()
+    }
 
     // Update and draw bullets
     data.bullets.forEach((bullet, bulletIndex) => {
@@ -160,12 +197,14 @@ export default function MeteorDodgerPage() {
     // Spawn meteors
     const now = Date.now()
     if (now - data.lastMeteorSpawn > data.meteorSpawnRate) {
-      spawnMeteor()
+      spawnMeteor(score)
       data.lastMeteorSpawn = now
-      // Increase difficulty over time
-      if (data.meteorSpawnRate > 300) {
-        data.meteorSpawnRate -= 5
-      }
+      
+      // Increase difficulty over time - spawn rate gets faster with score
+      const baseSpawnRate = 800
+      const minSpawnRate = 300
+      const scoreReduction = Math.floor(score / 100) * 20 // Reduce by 20ms every 100 points
+      data.meteorSpawnRate = Math.max(minSpawnRate, baseSpawnRate - scoreReduction)
     }
 
     // Update and draw meteors
@@ -180,27 +219,20 @@ export default function MeteorDodgerPage() {
         return
       }
 
-      // Draw meteor
-      ctx.save()
-      ctx.translate(meteor.x + meteor.width / 2, meteor.y + meteor.height / 2)
-      ctx.rotate(meteor.rotation!)
-      
-      // Meteor body
-      ctx.fillStyle = "#78716c"
-      ctx.beginPath()
-      ctx.arc(0, 0, meteor.width / 2, 0, Math.PI * 2)
-      ctx.fill()
-      
-      // Meteor craters
-      ctx.fillStyle = "#57534e"
-      ctx.beginPath()
-      ctx.arc(-meteor.width / 6, -meteor.width / 6, meteor.width / 6, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.beginPath()
-      ctx.arc(meteor.width / 6, meteor.width / 8, meteor.width / 8, 0, Math.PI * 2)
-      ctx.fill()
-      
-      ctx.restore()
+      // Draw meteor with image
+      if (asteroidImageRef.current && imagesLoaded) {
+        ctx.save()
+        ctx.translate(meteor.x + meteor.width / 2, meteor.y + meteor.height / 2)
+        ctx.rotate(meteor.rotation!)
+        ctx.drawImage(
+          asteroidImageRef.current,
+          -meteor.width / 2,
+          -meteor.height / 2,
+          meteor.width,
+          meteor.height
+        )
+        ctx.restore()
+      }
 
       // Check collision with player
       if (checkCollision(data.player, meteor)) {
@@ -211,14 +243,60 @@ export default function MeteorDodgerPage() {
       }
     })
 
-    // Draw score
+    // Draw score with difficulty indicator
     ctx.fillStyle = "#ffffff"
     ctx.font = "24px Arial"
     ctx.fillText(`Puntuación: ${score}`, 20, 40)
     ctx.fillText(`Récord: ${highScore}`, 20, 70)
+    
+    // Show difficulty level
+    const difficultyLevel = Math.floor(score / 500) + 1
+    ctx.fillStyle = "#fbbf24"
+    ctx.font = "20px Arial"
+    ctx.fillText(`Nivel: ${difficultyLevel}`, 20, 100)
+
+    // Draw heat bar
+    const barWidth = 200
+    const barHeight = 20
+    const barX = canvas.width - barWidth - 20
+    const barY = 20
+    
+    // Background bar
+    ctx.fillStyle = "#333"
+    ctx.fillRect(barX, barY, barWidth, barHeight)
+    
+    // Heat level bar
+    const heatPercentage = data.heat / 100
+    if (data.overheated) {
+      ctx.fillStyle = "#ef4444" // Red when overheated
+    } else if (data.heat > 70) {
+      ctx.fillStyle = "#f97316" // Orange when high
+    } else if (data.heat > 40) {
+      ctx.fillStyle = "#fbbf24" // Yellow when medium
+    } else {
+      ctx.fillStyle = "#22c55e" // Green when low
+    }
+    ctx.fillRect(barX, barY, barWidth * heatPercentage, barHeight)
+    
+    // Bar border
+    ctx.strokeStyle = "#fff"
+    ctx.lineWidth = 2
+    ctx.strokeRect(barX, barY, barWidth, barHeight)
+    
+    // Heat label
+    ctx.fillStyle = "#fff"
+    ctx.font = "14px Arial"
+    ctx.fillText("Calor", barX, barY - 5)
+    
+    // Overheated warning
+    if (data.overheated) {
+      ctx.fillStyle = "#ef4444"
+      ctx.font = "bold 18px Arial"
+      ctx.fillText("¡SOBRECALENTADO!", barX - 20, barY + barHeight + 20)
+    }
 
     data.animationId = requestAnimationFrame(gameLoop)
-  }, [gameState, score, highScore, spawnMeteor, checkCollision, shootBullet])
+  }, [gameState, score, highScore, spawnMeteor, checkCollision, shootBullet, imagesLoaded])
 
   useEffect(() => {
     if (gameState === "playing") {
@@ -261,11 +339,37 @@ export default function MeteorDodgerPage() {
     gameDataRef.current.lastMeteorSpawn = Date.now()
     gameDataRef.current.meteorSpawnRate = 800
     gameDataRef.current.lastShot = 0
+    gameDataRef.current.heat = 0
+    gameDataRef.current.overheated = false
+    gameDataRef.current.lastCooldown = Date.now()
   }
 
   const restartGame = () => {
     startGame()
   }
+
+  // Load images
+  useEffect(() => {
+    const rocketImg = new Image()
+    const asteroidImg = new Image()
+    
+    let loadedCount = 0
+    const checkAllLoaded = () => {
+      loadedCount++
+      if (loadedCount === 2) {
+        setImagesLoaded(true)
+      }
+    }
+    
+    rocketImg.onload = checkAllLoaded
+    asteroidImg.onload = checkAllLoaded
+    
+    rocketImg.src = "/images/cohete.png"
+    asteroidImg.src = "/images/Asteroids.png"
+     
+    rocketImageRef.current = rocketImg
+    asteroidImageRef.current = asteroidImg
+  }, [])
 
   // Background music setup
   useEffect(() => {
@@ -314,7 +418,7 @@ export default function MeteorDodgerPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-8">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-6">☄️ Esquiva Meteoros</h1>
+        <h1 className="text-4xl font-bold text-white mb-6">Esquiva Meteoros</h1>
 
         {/* Canvas */}
         <div className="relative inline-block">
@@ -382,7 +486,10 @@ export default function MeteorDodgerPage() {
             <strong className="text-white">Controles:</strong> Usa las teclas de flecha (←↑↓→) para mover tu nave | Presiona ESPACIO para disparar
           </p>
           <p className="mb-2">
-            <strong className="text-white">Puntuación:</strong> +10 puntos por cada meteoro esquivado | +50 puntos por cada meteoro destruido 💥
+            <strong className="text-white">Puntuación:</strong> +10 puntos por cada meteoro esquivado | +50 puntos por cada meteoro destruido
+          </p>
+          <p className="mb-2">
+            <strong className="text-white">Sistema de Calor:</strong> El arma se sobrecalienta si disparas mucho seguido. ¡Deja enfriar!
           </p>
           <p>
             <strong className="text-white">Objetivo:</strong> Esquiva o destruye los meteoros y sobrevive el mayor tiempo posible

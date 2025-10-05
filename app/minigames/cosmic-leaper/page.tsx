@@ -5,6 +5,7 @@
 import { useRef, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Howl } from "howler"
 
 // --- Configuración del Juego ---
 const CANVAS_WIDTH = 500
@@ -37,6 +38,7 @@ export default function CosmicLeaperPage() {
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
   const router = useRouter()
+  const backgroundMusicRef = useRef<Howl | null>(null)
 
   const gameDataRef = useRef<{
     player: Player
@@ -50,6 +52,49 @@ export default function CosmicLeaperPage() {
     animationId: 0,
     mouseX: CANVAS_WIDTH / 2, // Posición inicial del ratón
   })
+
+  // Initialize music
+  useEffect(() => {
+    backgroundMusicRef.current = new Howl({
+      src: ['/music/the-signal.wav'],
+      loop: false, // Manejo manual del loop
+      volume: 0,
+      autoplay: true,
+      onload: () => {
+        console.log('Cosmic Leaper music loaded')
+      },
+      onplay: () => {
+        // Fade in from 0 to 0.1 over 2 seconds
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.fade(0, 0.1, 2000)
+        }
+      },
+      onend: () => {
+        // Loop back to the beginning (second 0) when reaches second 168
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.seek(0)
+          backgroundMusicRef.current.play()
+        }
+      }
+    })
+
+    // Stop at 168 seconds using a timer
+    const checkTime = setInterval(() => {
+      if (backgroundMusicRef.current && backgroundMusicRef.current.playing()) {
+        const currentTime = backgroundMusicRef.current.seek() as number
+        if (currentTime >= 168) {
+          backgroundMusicRef.current.seek(0)
+        }
+      }
+    }, 100) // Check every 100ms
+
+    return () => {
+      clearInterval(checkTime)
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.unload()
+      }
+    }
+  }, [])
 
   // --- Inicialización y Lógica de Plataformas ---
 

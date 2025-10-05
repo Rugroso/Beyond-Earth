@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Howl } from "howler"
 
 interface GameObject {
   x: number
@@ -19,6 +20,8 @@ export default function MeteorDodgerPage() {
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
   const router = useRouter()
+  const backgroundMusicRef = useRef<Howl | null>(null)
+  const shootSoundRef = useRef<Howl | null>(null)
 
   const gameDataRef = useRef({
     player: { x: 400, y: 500, width: 40, height: 40, speed: 8 },
@@ -50,6 +53,12 @@ export default function MeteorDodgerPage() {
     
     // Check cooldown
     if (now - data.lastShot < data.shootCooldown) return
+    
+    if (shootSoundRef.current) {
+      shootSoundRef.current.seek(0)
+      shootSoundRef.current.play()
+      shootSoundRef.current.volume(0.3)
+    }
     
     // Create bullet from player position
     data.bullets.push({
@@ -214,10 +223,18 @@ export default function MeteorDodgerPage() {
   useEffect(() => {
     if (gameState === "playing") {
       const handleKeyDown = (e: KeyboardEvent) => {
+        // Prevent default behavior for game controls
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " ", "Space"].includes(e.key)) {
+          e.preventDefault()
+        }
         gameDataRef.current.keys[e.key] = true
       }
 
       const handleKeyUp = (e: KeyboardEvent) => {
+        // Prevent default behavior for game controls
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " ", "Space"].includes(e.key)) {
+          e.preventDefault()
+        }
         gameDataRef.current.keys[e.key] = false
       }
 
@@ -249,6 +266,50 @@ export default function MeteorDodgerPage() {
   const restartGame = () => {
     startGame()
   }
+
+  // Background music setup
+  useEffect(() => {
+    // Initialize shoot sound effect
+    shootSoundRef.current = new Howl({
+      src: ["/sounds/plasma_sound.mp3"],
+      volume: 1,
+    })
+
+    backgroundMusicRef.current = new Howl({
+      src: ["/music/the-signal.wav"],
+      loop: false,
+      volume: 0,
+      autoplay: true,
+      onload: () => {
+        console.log("Meteor Dodger music loaded")
+      },
+      onplay: () => {
+        // Fade in from 0 to 0.2 over 2 seconds
+        backgroundMusicRef.current?.fade(0, 0.1, 2000)
+      },
+      onend: () => {
+        // Loop back to start when song ends
+        backgroundMusicRef.current?.seek(0)
+        backgroundMusicRef.current?.play()
+      },
+    })
+
+    // Check every 100ms if we've reached 168 seconds, then loop back to 0
+    const checkInterval = setInterval(() => {
+      if (backgroundMusicRef.current) {
+        const currentTime = backgroundMusicRef.current.seek() as number
+        if (currentTime >= 168) {
+          backgroundMusicRef.current.seek(0)
+        }
+      }
+    }, 100)
+
+    return () => {
+      clearInterval(checkInterval)
+      backgroundMusicRef.current?.unload()
+      shootSoundRef.current?.unload()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-8">
@@ -305,7 +366,7 @@ export default function MeteorDodgerPage() {
                   <Button
                     onClick={() => router.push("/minigames")}
                     variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 text-lg px-6 py-4"
+                    className="border-white/30 text-black hover:bg-white/10 text-lg px-6 py-4"
                   >
                     Volver
                   </Button>
@@ -332,7 +393,7 @@ export default function MeteorDodgerPage() {
         <Button
           onClick={() => router.push("/minigames")}
           variant="outline"
-          className="mt-6 border-white/30 text-white hover:bg-white/10"
+          className="mt-6 border-white/30 text-black hover:bg-white/10"
         >
           ← Volver a Minijuegos
         </Button>

@@ -47,6 +47,7 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
     "geist": "latest",
+    "howler": "^2.2.4",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
+    "@types/howler": "^2.2.12",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

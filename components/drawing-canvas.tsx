@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import { Howl } from "howler"
 
 export function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -10,6 +11,7 @@ export function DrawingCanvas() {
   const [color, setColor] = useState("#ffffff")
   const [brushSize, setBrushSize] = useState(5)
   const [tool, setTool] = useState<"brush" | "eraser">("brush")
+  const backgroundMusicRef = useRef<Howl | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -20,6 +22,34 @@ export function DrawingCanvas() {
 
     // Set canvas background to transparent
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // Initialize Howler background music
+    backgroundMusicRef.current = new Howl({
+      src: ['/music/orbit.wav'],
+      loop: true,
+      volume: 0,
+      autoplay: true,
+      onload: () => {
+        console.log('Drawing canvas music loaded')
+        // Seek to 48 seconds when loaded
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.seek(48)
+        }
+      },
+      onplay: () => {
+        // Fade in from 0 to 0.7 over 3 seconds
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.fade(0, 0.7, 3000)
+        }
+      }
+    })
+
+    return () => {
+      // Cleanup Howler instance
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.unload()
+      }
+    }
   }, [])
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -100,8 +130,7 @@ export function DrawingCanvas() {
 
   return (
     <div className="flex flex-col gap-4 p-6 bg-slate-900 rounded-lg">
-      <h2 className="text-2xl font-bold text-white">Asset Creator</h2>
-
+      <h2 className="text-2xl font-bold text-white">Creador de Assets</h2>
       {/* Canvas */}
       <div className="relative bg-slate-800 rounded-lg p-4 flex items-center justify-center">
         <canvas

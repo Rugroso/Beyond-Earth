@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { EditableCanvas } from "@/components/editable-canvas/editable-canvas"
 import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Edit3, Eye, Download, Loader2 } from "lucide-react"
 import { useCanvasCapture } from "@/hooks/use-canvas-capture"
 import { useToast } from "@/hooks/use-toast"
+import { Howl } from "howler"
 
 export default function GamePage() {
   const context = useContext(EditorContext)
@@ -15,6 +16,7 @@ export default function GamePage() {
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
+  const backgroundMusicRef = useRef<Howl | null>(null)
 
   useEffect(() => {
     // Generate random stars
@@ -26,6 +28,24 @@ export default function GamePage() {
       delay: Math.random() * 3,
     }))
     setStars(generatedStars)
+
+    // Initialize Howler background music
+    backgroundMusicRef.current = new Howl({
+      src: ['/music/azzezi-nebula-view.wav'],
+      loop: true,
+      volume: 0.7,
+      autoplay: true,
+      onload: () => {
+        console.log('Background music loaded')
+      }
+    })
+
+    return () => {
+      // Cleanup Howler instance
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.unload()
+      }
+    }
   }, [])
 
   if (!context) return null
@@ -54,6 +74,7 @@ export default function GamePage() {
   return (
     <div className="relative flex h-screen flex-col bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
       {/* Animated stars background */}
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {stars.map((star) => (
           <div
@@ -77,7 +98,7 @@ export default function GamePage() {
       <header className="relative z-10 flex-shrink-0 border-b border-white/10 bg-slate-900/50 backdrop-blur-sm px-6 py-4">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-medium text-white">
-            {isEditMode ? "Editing" : "Preview"}
+            {isEditMode ? "Editando" : "Vista previa"}
           </h1>
           <div className="flex items-center gap-2">
             <Button

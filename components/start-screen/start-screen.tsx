@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Earth3D } from "@/components/earth-3d"
+import { Howl } from "howler"
 
 export function StartScreen() {
   const router = useRouter()
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [earthLoaded, setEarthLoaded] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const backgroundMusicRef = useRef<Howl | null>(null)
+  const hoverSoundRef = useRef<Howl | null>(null)
 
   useEffect(() => {
     // Generate random stars
@@ -23,31 +25,56 @@ export function StartScreen() {
     }))
     setStars(generatedStars)
 
+    // Initialize Howler sounds
+    backgroundMusicRef.current = new Howl({
+      src: ['/music/deep-sea.wav'],
+      loop: true,
+      volume: 0.4,
+      onload: () => {
+        console.log('Background music loaded')
+      }
+    })
+
+    hoverSoundRef.current = new Howl({
+      src: ['/sounds/button.mp3'],
+      volume: 1.0,
+      preload: true
+    })
+
     // Fixed loading time
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 1500)
     
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      // Cleanup Howler instances
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.unload()
+      }
+      if (hoverSoundRef.current) {
+        hoverSoundRef.current.unload()
+      }
+    }
   }, [])
 
   useEffect(() => {
     // Play music when loading finishes
-    if (!isLoading && audioRef.current) {
-      const audio = audioRef.current
-      // Configurar el tiempo de inicio en 10 segundos
-      audio.currentTime = 10
-      // Configurar el volumen (0.0 a 1.0)
-      audio.volume = 0.7
-      
-      audio.play().catch(error => {
-        console.log("Audio playback failed:", error)
-      })
+    if (!isLoading && backgroundMusicRef.current) {
+      // Seek to 10 seconds
+      backgroundMusicRef.current.seek(10)
+      backgroundMusicRef.current.play()
     }
   }, [isLoading])
 
   const handleEarthLoaded = () => {
     setEarthLoaded(true)
+  }
+
+  const playHoverSound = () => {
+    if (hoverSoundRef.current) {
+      hoverSoundRef.current.play()
+    }
   }
 
   const handleStart = (route: string) => {
@@ -56,14 +83,6 @@ export function StartScreen() {
 
   return (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900">
-      {/* Background Music */}
-      <audio
-        ref={audioRef}
-        src="/music/deep-sea.wav"
-        loop
-        preload="auto"
-      />
-
       <div className="absolute inset-0">
         {stars.map((star) => (
           <div
@@ -107,6 +126,7 @@ export function StartScreen() {
           </div>
           <Button
             onClick={() => handleStart("/start")}
+            onMouseEnter={playHoverSound}
             size="lg"
             className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-4 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
           >
@@ -115,6 +135,7 @@ export function StartScreen() {
 
         <Button
             onClick={() => handleStart("/asset-creator")}
+            onMouseEnter={playHoverSound}
             size="lg"
             className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
         >
@@ -123,6 +144,7 @@ export function StartScreen() {
 
         <Button
             onClick={() => handleStart("/resources")}
+            onMouseEnter={playHoverSound}
             size="lg"
             className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
         >
@@ -131,10 +153,11 @@ export function StartScreen() {
 
         <Button
             onClick={() => handleStart("/minigames")}
+            onMouseEnter={playHoverSound}
             size="lg"
             className="animate-pulse-glow bg-gradient-to-r bg-black hover:bg-white text-white hover:text-black font-semibold text-lg px-12 py-6 mt-1 rounded-full shadow-2xl shadow-blue-500/50 transition-all duration-300 hover:scale-110 hover:shadow-blue-400/70 w-66"
         >
-            🎮 MINIGAMES
+            MINIGAMES
         </Button>
         </div>
         </div>
@@ -199,13 +222,13 @@ export function StartScreen() {
         }
 
         .animate-earth-from-left {
-          animation: earth-from-left 0s ease-out forwards;
+          animation: earth-from-left 2s ease-out forwards;
         }
 
         @keyframes earth-from-left {
           from {
             opacity: 0;
-            transform: translateX(0px);
+            transform: translateX(-1000px);
           }
           to {
             opacity: 1;

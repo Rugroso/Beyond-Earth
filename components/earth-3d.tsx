@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, Suspense, useEffect } from "react"
+import { useRef, Suspense } from "react"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Sphere, useTexture } from "@react-three/drei"
 import * as THREE from "three"

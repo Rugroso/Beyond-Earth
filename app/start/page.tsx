@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { StepOne, StepTwo, StepThree } from "@/components/steps"
+import { Howl } from "howler"
 
 // Definir los pasos del tutorial
 const STEPS = [StepOne, StepTwo, StepThree]
@@ -11,6 +12,27 @@ const STEPS = [StepOne, StepTwo, StepThree]
 export default function StartPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
+  const backgroundMusicRef = useRef<Howl | null>(null)
+
+  useEffect(() => {
+    // Initialize Howler background music
+    backgroundMusicRef.current = new Howl({
+      src: ['/music/arrival.wav'],
+      loop: true,
+      volume: 0.6,
+      autoplay: true,
+      onload: () => {
+        console.log('Tutorial music loaded')
+      }
+    })
+
+    return () => {
+      // Cleanup Howler instance
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.unload()
+      }
+    }
+  }, [])
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {

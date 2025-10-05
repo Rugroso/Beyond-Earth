@@ -1,0 +1,2174 @@
+ENTATION_PLAN.md << 'EOF'
+# 🚀 BEYOND EARTH - NASA Space Habitat Challenge
+## Implementation Plan & Requirements Analysis
+
+---
+
+## �� PROJECT OVERVIEW
+
+**Challenge:** Create an easy-to-use visual tool for designing space habitat layouts that meet NASA standards for the Artemis program (Moon) and future Mars missions.
+
+**Target Users:** 
+- Students (multiple levels)
+- Engineering professionals
+- Space enthusiasts
+- Educators
+
+**Current Status:** ✅ Basic canvas editor with drag & drop functionality
+
+---
+
+## 🎯 CORE REQUIREMENTS (From NASA Challenge)
+
+### 1. **Habitat Configuration**
+- [ ] Select habitat shapes (cylindrical, spherical, toroidal, modular)
+- [ ] Define dimensions based on launch vehicle constraints
+- [ ] Choose habitat type (metallic, inflatable, in-situ)
+- [ ] Consider crew size (1-6 members)
+- [ ] Set mission duration
+- [ ] Select destination (Lunar Surface, Mars Surface, Deep Space, Transit)
+
+### 2. **Functional Areas Design**
+- [ ] 13 types of functional areas (sleep, hygiene, food prep, exercise, etc.)
+- [ ] Drag & drop placement within habitat
+- [ ] Automatic size validation based on crew size and duration
+- [ ] Visual feedback (green/yellow/red) for compliance
+- [ ] Area requirements scale with mission parameters
+
+### 3. **Design Validation & Rules**
+- [ ] Minimum area requirements per crew member
+- [ ] Zoning rules (adjacency & separation)
+- [ ] Launch vehicle fairing constraints
+- [ ] Volume calculations
+- [ ] Real-time validation feedback
+
+### 4. **Advanced Features**
+- [ ] Multiple levels/floors support
+- [ ] Radial layout around central core
+- [ ] Access path drawing and measurement
+- [ ] Object library (humans, spacesuits, equipment, furniture)
+- [ ] Object resizing and placement
+- [ ] Rotation support
+
+### 5. **Analysis & Metrics**
+- [ ] Floor area calculations (total, used, breakdown by area type)
+- [ ] Volume calculations
+- [ ] Utilization rate percentage
+- [ ] Compliance scoring (0-100)
+- [ ] Export metrics to PDF/JSON
+
+### 6. **Social & Sharing**
+- [ ] Save/load designs
+- [ ] Export designs (JSON format)
+- [ ] Share designs with community
+- [ ] Browse community designs
+- [ ] Import shared designs
+
+---
+
+## 🏗️ IMPLEMENTATION PHASES
+
+### ✅ PHASE 0: Foundation (COMPLETED)
+- [x] Type definitions for all entities
+- [x] Functional area requirements database (13 areas)
+- [x] Launch vehicle specifications (Falcon Heavy, SLS, Starship)
+- [x] Habitat shape templates
+- [x] Destination configurations
+- [x] Validation rule framework
+
+### 🚧 PHASE 1: Mission Configuration (IN PROGRESS)
+**Priority: CRITICAL**
+
+#### Components to Create:
+1. **Mission Configuration Wizard** (`/app/habitat-designer/page.tsx`)
+   - Step 1: Choose destination and mission duration
+   - Step 2: Select launch vehicle
+   - Step 3: Choose habitat type and shape
+   - Step 4: Define dimensions (with constraints)
+   - Step 5: Set crew size
+   - Summary: Review all parameters
+
+2. **Habitat Configuration Panel** (`/components/habitat/habitat-config-panel.tsx`)
+   - Display current habitat specs
+   - Show volume calculations
+   - Display constraints and warnings
+   - Quick edit functionality
+
+#### Files to Update:
+- `hooks/use-editor-state.ts` - Add habitat management functions
+- `contexts/editor-context.tsx` - Add mission/habitat config
+
+**Deliverables:**
+- Complete wizard UI
+- Mission config storage
+- Habitat dimension validation
+- Visual feedback system
+
+---
+
+### 🎯 PHASE 2: Functional Areas Library
+**Priority: CRITICAL**
+
+#### Components to Create:
+1. **Functional Areas Palette** (`/components/habitat/functional-areas-palette.tsx`)
+   - Categorized area list (required vs optional)
+   - Drag & drop support
+   - Show icon, color, description
+   - Display min. requirements
+   - Visual indicators for placed areas
+
+2. **Placed Functional Area Component** (`/components/habitat/placed-functional-area.tsx`)
+   - Resizable area blocks
+   - Color-coded by type
+   - Validation status indicator (✓ ⚠ ✗)
+   - Real-time dimension display (m²)
+   - Tooltip with requirements
+   - Right-click context menu (delete, properties)
+
+3. **Area Properties Panel** (`/components/habitat/area-properties-panel.tsx`)
+   - Edit area dimensions
+   - View requirements vs actual
+   - See validation messages
+   - Adjacency/separation recommendations
+
+#### Validation Logic:
+- Calculate minimum area based on crew size and duration
+- Check if area meets NASA standards
+- Validate zoning rules (adjacent/separate areas)
+- Real-time visual feedback
+
+**Deliverables:**
+- 13 functional area types fully implemented
+- Drag & drop from palette to canvas
+- Real-time validation
+- Visual feedback system (color-coded borders)
+
+---
+
+### 🔍 PHASE 3: Advanced Design Tools
+**Priority: HIGH**
+
+#### Features:
+1. **Multi-Level Support**
+   - Level selector (Floor 1, 2, 3...)
+   - 3D visualization toggle
+   - Vertical circulation planning
+
+2. **Measurement Tools**
+   - Distance measurement between areas
+   - Access path drawing
+   - Path width validation (min 0.7m)
+   - Calculate walking distances
+
+3. **Object Library**
+   - Human models (1.8m height reference)
+   - Spacesuits (bulky, needs 1.2m clearance)
+   - Equipment (medical kit, tools, etc.)
+   - Furniture (beds, tables, chairs)
+   - Storage containers
+   - Exercise equipment
+   - Plant growth modules
+
+4. **Layout Assistance**
+   - Auto-arrange suggestions
+   - Snap-to-grid
+   - Alignment guides
+   - Symmetry tools
+
+**Deliverables:**
+- Multi-level canvas switching
+- Measurement overlay system
+- Object drag & drop with collision detection
+- Smart layout suggestions
+
+---
+
+### 📊 PHASE 4: Analysis & Metrics Dashboard
+**Priority: HIGH**
+
+#### Components to Create:
+1. **Metrics Dashboard** (`/components/habitat/metrics-dashboard.tsx`)
+   - Total habitat volume (m³)
+   - Total floor area (m²)
+   - Used vs available space
+   - Utilization percentage
+   - Area breakdown pie chart
+   - Validation score (0-100)
+
+2. **Compliance Checker** (`/components/habitat/compliance-checker.tsx`)
+   - Required areas checklist
+   - Size compliance (all areas)
+   - Zoning compliance
+   - Accessibility check
+   - Warning/error list
+
+3. **Comparison Tool**
+   - Compare multiple designs side-by-side
+   - Show metrics differences
+   - Highlight best practices
+
+#### Metrics Calculated:
+- Floor area per functional area type
+- Volume utilization
+- Crew space per person (m³/crew)
+- Validation score (weighted algorithm)
+- Compliance percentage
+
+**Deliverables:**
+- Real-time metrics calculation
+- Visual dashboard with charts
+- Export metrics to PDF
+- Compliance scoring system
+
+---
+
+### 💾 PHASE 5: Save/Load & Export
+**Priority: MEDIUM**
+
+#### Features:
+1. **Local Storage**
+   - Auto-save every 30 seconds
+   - Manual save with name
+   - Load saved designs
+   - Design history (last 10)
+
+2. **Export Functionality**
+   - Export to JSON (full design data)
+   - Export to PNG (canvas screenshot)
+   - Export metrics to PDF
+   - Export to 3D format (optional: OBJ/GLTF)
+
+3. **Import Designs**
+   - Import from JSON
+   - Validate imported data
+   - Merge with current design
+
+**Deliverables:**
+- Save/load system
+- Export in multiple formats
+- Import validation
+- Auto-save functionality
+
+---
+
+### 🌐 PHASE 6: Community & Social Features
+**Priority: LOW (Nice to Have)
+
+#### Features:
+1. **Design Gallery**
+   - Browse community designs
+   - Filter by crew size, destination, duration
+   - Thumbnail previews
+   - Like/rating system
+
+2. **Sharing**
+   - Generate shareable link
+   - Copy design code
+   - Share to social media
+   - Embed in websites
+
+3. **Templates Library**
+   - NASA reference designs
+   - Community top designs
+   - Pre-configured scenarios
+
+**Deliverables:**
+- Public design gallery
+- Share functionality
+- Template system
+
+---
+
+## 🎨 UI/UX IMPROVEMENTS
+
+### Accessibility:
+- Keyboard navigation support
+- Screen reader friendly
+- High contrast mode
+- Touch device support
+- Responsive design (desktop focus)
+
+### Educational Features:
+- Tooltips explaining NASA standards
+- Tutorial mode (guided walkthrough)
+- Help panel with reference docs
+- Video tutorials
+- Interactive demos
+
+### Visual Enhancements:
+- 3D preview mode (React Three Fiber)
+- Animated transitions
+- Dark/light theme toggle
+- Color-blind friendly color scheme
+- Loading states & progress indicators
+
+---
+
+## 📚 NASA REFERENCE DATA INTEGRATED
+
+### Functional Area Standards:
+- **Sleep Quarters:** 3.5 m² per crew (NASA: 3-4 m²)
+- **Hygiene:** 2.0 m² per crew
+- **Food Prep:** 1.5 m² per crew (scales with duration)
+- **Exercise:** 2.5 m² per crew (critical for health)
+- **Workstation:** 2.0 m² per crew
+- **Stowage:** 3.0 m² per crew (scales significantly)
+- **Medical:** 1.0 m² base (doesn't scale linearly)
+- **ECLSS:** System-based sizing
+- **Airlock:** 1-2 per habitat
+
+### Launch Vehicle Data:
+- **Falcon Heavy:** 5.2m diameter, 13.1m height
+- **SLS Block 1:** 5.0m diameter, 27.4m height
+- **Starship:** 9.0m diameter, 17.0m usable height
+
+### Volume Requirements:
+- **Short missions (<90 days):** 25-30 m³ per crew
+- **Medium missions (90-365 days):** 30-40 m³ per crew
+- **Long missions (>365 days):** 40-50 m³ per crew
+
+---
+
+## 🔧 TECHNICAL STACK
+
+### Current:
+- Next.js 15 (React 19)
+- TypeScript
+- Tailwind CSS
+- Radix UI components
+- React Three Fiber (for 3D)
+- Canvas API
+
+### To Add:
+- `react-pdf/renderer` - PDF export
+- `recharts` - Charts for dashboard
+- `html2canvas` - Canvas screenshots
+- `zustand` or `jotai` - State management (optional)
+- `framer-motion` - Animations
+
+---
+
+## 📅 TIMELINE ESTIMATE
+
+- **Phase 1:** 2-3 days (Mission config wizard)
+- **Phase 2:** 3-4 days (Functional areas system)
+- **Phase 3:** 3-4 days (Advanced tools)
+- **Phase 4:** 2-3 days (Metrics dashboard)
+- **Phase 5:** 1-2 days (Save/load/export)
+- **Phase 6:** 2-3 days (Social features)
+
+**Total:** ~15-20 days for full implementation
+
+---
+
+## 🎯 NEXT IMMEDIATE STEPS
+
+1. ✅ Update `use-editor-state.ts` with habitat management
+2. ✅ Create Mission Configuration Wizard
+3. ✅ Build Functional Areas Palette
+4. ✅ Implement validation system
+5. ✅ Create metrics dashboard
+
+---
+
+## 📖 RESOURCES & REFERENCES
+
+- NASA Human Integration Design Handbook (HIDH)
+- ISS Design Standards
+- Artemis Mission Requirements
+- Gateway Habitat Concepts
+- Mars Transit Habitat Studies
+
+---
+
+## 🎓 EDUCATIONAL VALUE
+
+This tool will teach users:
+- Space habitat design principles
+- NASA mission planning
+- Engineering constraints
+- Trade-offs in design decisions
+- Human factors in space
+- Life support requirements
+- Launch vehicle limitations
+- Mission duration impacts
+
+**Goal:** Make space habitat design accessible, fun, and educational!
+
+---
+
+*Last Updated: October 4, 2025*
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/PROGRESS_SUMMARY.md << 'EOF'
+# 🎯 BEYOND EARTH - Progress Summary
+## Current Implementation Status
+
+---
+
+## ✅ COMPLETED FEATURES (Foundation Layer)
+
+### 1. **Complete Type System** ✅
+**File:** `types/index.ts`
+
+Includes comprehensive TypeScript interfaces for:
+- ✅ 13 Functional Area Types (sleep, hygiene, food-prep, exercise, workstation, stowage, medical, recreation, maintenance, ECLSS, airlock, plant-growth, common-area)
+- ✅ Mission Configuration (crew size, duration, destination, launch vehicle)
+- ✅ Habitat Configuration (shape, type, dimensions, volume, levels)
+- ✅ Validation System (rules, metrics, compliance scoring)
+- ✅ Design Save/Load/Share structures
+
+### 2. **NASA Standards Database** ✅
+**File:** `lib/habitat/functional-areas.ts`
+
+Complete implementation of:
+- ✅ All 13 functional area requirements based on NASA standards
+- ✅ Minimum area per crew member (m²)
+- ✅ Minimum volume per crew member (m³)
+- ✅ Scaling factors for mission duration
+- ✅ Adjacency rules (which areas should be near each other)
+- ✅ Separation rules (which areas should be apart)
+- ✅ Color coding and icons for each area
+- ✅ Validation functions (getMinimumArea, getMinimumVolume)
+
+**Example Standards:**
+- Sleep Quarters: 3.5 m²/crew (NASA: 3-4 m²)
+- Exercise: 2.5 m²/crew (critical for microgravity health)
+- Food Prep: 1.5 m²/crew (scales 1.2x with duration)
+- Stowage: 3.0 m²/crew (scales 1.5x - most scaling)
+
+### 3. **Launch Vehicle & Habitat Specs** ✅
+**File:** `lib/habitat/habitat-configs.ts`
+
+Real NASA data integrated:
+- ✅ **4 Launch Vehicles:**
+  - Falcon Heavy (5.2m × 13.1m, 63,800 kg payload)
+  - SLS Block 1 (5.0m × 27.4m, 95,000 kg payload)
+  - Starship (9.0m × 17.0m, 100,000 kg payload)
+  - Custom configuration
+
+- ✅ **4 Habitat Shapes:**
+  - Cylindrical 🛢️ (efficient, traditional)
+  - Spherical ⚪ (optimal pressure vessel)
+  - Toroidal 🍩 (artificial gravity capable)
+  - Modular 🔗 (expandable, flexible)
+
+- ✅ **3 Habitat Types:**
+  - Metallic 🔩 (proven, strong, heavy)
+  - Inflatable 🎈 (lightweight, large volume)
+  - In-Situ 🏗️ (built on-site, uses local materials)
+
+- ✅ **4 Destinations:**
+  - Lunar Surface 🌙
+  - Mars Surface 🔴
+  - Deep Space 🌌
+  - Transit Vehicle 🚀
+
+### 4. **State Management System** ✅
+**File:** `hooks/use-editor-state.ts`
+
+Complete editor state with:
+- ✅ Mission configuration management
+- ✅ Habitat configuration management
+- ✅ Functional areas CRUD operations
+- ✅ Space objects management
+- ✅ Multi-level support (floors)
+- ✅ Real-time validation
+- ✅ Automatic area calculation (pixels → meters)
+- ✅ Design metrics calculation
+- ✅ Save/Load to localStorage
+- ✅ JSON export/import
+
+**Key Functions:**
+```typescript
+- setMissionConfig() - Configure mission parameters
+- setHabitatConfig() - Set habitat specs
+- addFunctionalArea() - Add area with auto-validation
+- updateFunctionalArea() - Update with re-validation
+- validateDesign() - Calculate all metrics
+- saveDesign() - Save to localStorage
+- loadDesign() - Load saved design
+```
+
+### 5. **Validation Engine** ✅
+**Built into:** `use-editor-state.ts`
+
+Real-time validation that:
+- ✅ Converts canvas pixels to real meters (20 pixels = 1 meter)
+- ✅ Calculates actual area in m²
+- ✅ Compares against NASA minimum requirements
+- ✅ Provides 3-level status:
+  - 🟢 **Valid** (meets requirements)
+  - 🟡 **Warning** (80-100% of requirement)
+  - 🔴 **Invalid** (<80% of requirement)
+- ✅ Generates helpful validation messages
+
+### 6. **Metrics Dashboard Logic** ✅
+**Built into:** `validateDesign()` function
+
+Calculates:
+- ✅ Total habitat volume (m³)
+- ✅ Total floor area (m²)
+- ✅ Used area (m²)
+- ✅ Utilization rate (%)
+- ✅ Area breakdown by functional type
+- ✅ Volume breakdown
+- ✅ Validation score (0-100)
+- ✅ Compliance checklist
+
+---
+
+## �� WHAT YOU CAN BUILD NOW
+
+With this foundation, you can immediately create:
+
+### **Priority 1: Mission Configuration Wizard** 🚀
+Create a step-by-step wizard at `/app/habitat-designer/page.tsx`:
+
+```typescript
+Step 1: Choose Destination
+- Lunar Surface, Mars Surface, Deep Space, Transit
+- Show gravity, radiation, temperature info
+
+Step 2: Mission Parameters
+- Crew size (1-6 slider)
+- Duration (days input)
+- Show recommended crew size based on duration
+
+Step 3: Launch Vehicle
+- Falcon Heavy, SLS, Starship, Custom
+- Show diameter and height constraints
+- Visual comparison
+
+Step 4: Habitat Type & Shape
+- Type: Metallic, Inflatable, In-Situ
+- Shape: Cylindrical, Spherical, Toroidal, Modular
+- Show pros/cons for each
+
+Step 5: Dimensions
+- Width/height sliders with constraints
+- Real-time volume calculation
+- Visual warning if exceeds vehicle limits
+
+Step 6: Summary
+- Review all parameters
+- Show calculated volume
+- Recommended crew size
+- Start designing button
+```
+
+### **Priority 2: Functional Areas Palette** 🎨
+Create draggable palette at `/components/habitat/functional-areas-palette.tsx`:
+
+```typescript
+Features:
+- Show all 13 area types
+- Required vs Optional sections
+- Display icon, name, color
+- Show minimum size needed
+- Drag & drop to canvas
+- Show NASA description on hover
+- Indicate which areas are already placed
+```
+
+### **Priority 3: Canvas with Functional Areas** 🖼️
+Enhance existing canvas to support functional areas:
+
+```typescript
+Features:
+- Drag functional area from palette
+- Drop on canvas
+- Auto-validate size
+- Color-coded borders (green/yellow/red)
+- Resizable handles
+- Show m² in real-time
+- Tooltip with requirements
+- Right-click menu (delete, properties)
+- Snap-to-grid option
+```
+
+### **Priority 4: Metrics Sidebar** 📊
+Create dashboard at `/components/habitat/metrics-dashboard.tsx`:
+
+```typescript
+Display:
+- Habitat volume (m³)
+- Total floor area (m²)
+- Used area (m²)
+- Utilization % (progress bar)
+- Validation score (0-100)
+- Area breakdown (pie chart)
+- Compliance checklist
+- Warning/error list
+```
+
+---
+
+## 🎨 RECOMMENDED UI STRUCTURE
+
+```
+/app/habitat-designer/page.tsx (Main Designer)
+│
+├── Mission Config Wizard (first-time setup)
+│   ├── Step 1: Destination
+│   ├── Step 2: Mission Params
+│   ├── Step 3: Launch Vehicle
+│   ├── Step 4: Habitat Type
+│   ├── Step 5: Dimensions
+│   └── Step 6: Summary
+│
+└── Main Designer Layout
+    ├── Top Bar
+    │   ├── Mission info chip
+    │   ├── Habitat info chip
+    │   └── Actions (Save, Load, Export)
+    │
+    ├── Left Sidebar (300px)
+    │   ├── Functional Areas Palette
+    │   │   ├── Required Areas (11)
+    │   │   └── Optional Areas (2)
+    │   └── Space Objects Library (future)
+    │
+    ├── Center Canvas (flex-1)
+    │   ├── Toolbar (zoom, levels, measure)
+    │   ├── Canvas (with grid)
+    │   └── Status Bar (coordinates, scale)
+    │
+    └── Right Sidebar (300px)
+        ├── Metrics Dashboard
+        │   ├── Volume & Area stats
+        │   ├── Utilization graph
+        │   └── Validation score
+        ├── Compliance Checker
+        │   ├── Required areas checklist
+        │   └── Warning/error list
+        └── Selected Area Properties
+            ├── Area type & dimensions
+            ├── Validation status
+            └── Edit controls
+```
+
+---
+
+## 🚀 NEXT IMPLEMENTATION STEPS
+
+### **Step 1: Create Mission Wizard** (2-3 hours)
+```bash
+# Create new route
+mkdir -p app/habitat-designer
+touch app/habitat-designer/page.tsx
+
+# Create wizard components
+mkdir -p components/habitat/wizard
+touch components/habitat/wizard/mission-wizard.tsx
+touch components/habitat/wizard/destination-step.tsx
+touch components/habitat/wizard/crew-step.tsx
+touch components/habitat/wizard/vehicle-step.tsx
+touch components/habitat/wizard/habitat-step.tsx
+touch components/habitat/wizard/dimensions-step.tsx
+touch components/habitat/wizard/summary-step.tsx
+```
+
+### **Step 2: Create Functional Areas Palette** (2-3 hours)
+```bash
+mkdir -p components/habitat
+touch components/habitat/functional-areas-palette.tsx
+touch components/habitat/area-card.tsx
+```
+
+### **Step 3: Enhance Canvas** (2-3 hours)
+```bash
+touch components/habitat/habitat-canvas.tsx
+touch components/habitat/placed-functional-area.tsx
+```
+
+### **Step 4: Create Metrics Dashboard** (2-3 hours)
+```bash
+touch components/habitat/metrics-dashboard.tsx
+touch components/habitat/compliance-checker.tsx
+touch components/habitat/area-breakdown-chart.tsx
+```
+
+---
+
+## 💡 KEY FEATURES WORKING
+
+✅ **Automatic Validation**
+- Drop an area on canvas → Instantly validates size
+- Resize an area → Re-validates in real-time
+- Change mission params → All areas re-validate
+
+✅ **Smart Scaling**
+- Mission duration affects required area
+- Short mission (30 days): 1.0x multiplier
+- Medium mission (180 days): 1.1x multiplier
+- Long mission (365+ days): 1.3x multiplier
+
+✅ **Intelligent Feedback**
+- Too small → Red border + error message
+- Slightly small → Yellow border + warning
+- Meets requirements → Green border + checkmark
+
+✅ **NASA Compliance**
+- All requirements based on real NASA standards
+- Launch vehicle constraints enforced
+- Zoning rules (adjacency/separation) ready to implement
+
+---
+
+## 🎓 EDUCATIONAL VALUE
+
+Users will learn:
+- Why sleep areas need to be away from noisy equipment
+- How mission duration affects habitat design
+- Launch vehicle limitations and trade-offs
+- Volume requirements for long-duration missions
+- Importance of exercise in microgravity
+- Life support system placement
+- EVA operations (airlock placement)
+
+---
+
+## 📦 READY-TO-USE DATA
+
+You have immediate access to:
+- `FUNCTIONAL_AREA_REQUIREMENTS` - All 13 areas with specs
+- `LAUNCH_VEHICLES` - All 4 vehicles with constraints
+- `HABITAT_SHAPE_TEMPLATES` - All 4 shapes with formulas
+- `HABITAT_TYPES` - All 3 types with pros/cons
+- `DESTINATIONS` - All 4 destinations with considerations
+
+---
+
+## 🔧 TECHNICAL NOTES
+
+**Coordinate System:**
+- Canvas uses pixels
+- System auto-converts to meters (20px = 1m)
+- All validation uses real meters
+- Display shows both units
+
+**State Management:**
+- Everything in React Context (EditorContext)
+- No external state library needed yet
+- LocalStorage for persistence
+- JSON for import/export
+
+**Validation Flow:**
+```
+1. User drops/resizes area
+2. Calculate real dimensions (px → m)
+3. Get minimum requirement from database
+4. Compare actual vs required
+5. Set validation status (valid/warning/invalid)
+6. Generate message
+7. Update UI (border color, tooltip)
+```
+
+---
+
+## 🎯 CURRENT STATUS: PHASE 1 READY
+
+✅ Foundation Complete
+🚧 UI Components Needed
+⏳ Visual Design Pending
+⏳ User Testing Pending
+
+**You can now build the complete UI layer on top of this solid foundation!**
+
+---
+
+*Last Updated: October 4, 2025*
+*Files Ready: 4 | Lines of Code: ~800 | NASA Standards: ✅*
+EOF
+mkdir -p /Users/apobook/Documents/Development/next/Beyond-Earth/app/habitat-designer /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/mission-wizard.tsx << 'EOF'
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import type { MissionConfig, HabitatConfig, Destination, LaunchVehicle, HabitatType, HabitatShape } from "@/types"
+import { DestinationStep } from "./destination-step"
+import { CrewStep } from "./crew-step"
+import { VehicleStep } from "./vehicle-step"
+import { HabitatStep } from "./habitat-step"
+import { DimensionsStep } from "./dimensions-step"
+import { SummaryStep } from "./summary-step"
+import { Rocket, ArrowLeft, ArrowRight, Check } from "lucide-react"
+
+interface MissionWizardProps {
+  onComplete: (mission: MissionConfig, habitat: HabitatConfig) => void
+  onSkip?: () => void
+}
+
+export function MissionWizard({ onComplete, onSkip }: MissionWizardProp
+s) {
+  const [currentStep, setCurrentStep] = useState(0)
+  
+  // Mission configuration state
+  const [destination, setDestination] = useState<Destination>("lunar-surface")
+  const [crewSize, setCrewSize] = useState(4)
+  const [duration, setDuration] = useState(30)
+  const [launchVehicle, setLaunchVehicle] = useState<LaunchVehicle>("sls")
+  const [habitatType, setHabitatType] = useState<HabitatType>("metallic")
+  const [habitatShape, setHabitatShape] = useState<HabitatShape>("cylindrical")
+  const [dimensions, setDimensions] = useState({ width: 4.5, height: 10.0 })
+
+  const steps = [
+    {
+      title: "Choose Destination",
+      description: "Select where your habitat will be deployed",
+      icon: "🌍"
+    },
+    {
+      title: "Mission Parameters",
+      description: "Define crew size and mission duration",
+      icon: "👨‍🚀"
+    },
+    {
+      title: "Launch Vehicle",
+      description: "Select the vehicle that will deliver your habitat",
+      icon: "🚀"
+    },
+    {
+      title: "Habitat Configuration",
+      description: "Choose the type and shape of your habitat",
+      icon: "🏗️"
+    },
+    {
+      title: "Define Dimensions",
+      description: "Set the size of your habitat within constraints",
+      icon: "📏"
+    },
+    {
+      title: "Review & Confirm",
+      description: "Review all parameters before starting",
+      icon: "✅"
+    }
+  ]
+
+  const progress = ((currentStep + 1) / steps.length) * 100
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1)
+    } else {
+      handleComplete()
+    }
+  }
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const handleComplete = () => {
+    const missionConfig: MissionConfig = {
+      crewSize,
+      duration,
+      destination,
+      launchVehicle
+    }
+
+    const habitatConfig: HabitatConfig = {
+      shape: habitatShape,
+      type: habitatType,
+      dimensions: {
+        width: dimensions.width,
+        height: dimensions.height
+      },
+      volume: calculateVolume(habitatShape, dimensions.width, dimensions.height),
+      levels: 1
+    }
+
+    onComplete(missionConfig, habitatConfig)
+  }
+
+  const calculateVolume = (shape: HabitatShape, width: number, height: number): number => {
+    switch (shape) {
+      case "cylindrical":
+        return Math.PI * Math.pow(width / 2, 2) * height
+      case "spherical":
+        return (4 / 3) * Math.PI * Math.pow(width / 2, 3)
+      case "toroidal":
+        return 2 * Math.PI * Math.PI * (width / 2) * Math.pow(2, 2)
+      case "modular":
+        return 3 * Math.PI * Math.pow(width / 2, 2) * height
+      default:
+        return 0
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-5xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Rocket className="w-10 h-10 text-blue-400" />
+            <h1 className="text-4xl font-bold text-white">Mission Configuration</h1>
+          </div>
+          <p className="text-blue-200/80 text-lg">
+            Configure your space habitat mission parameters
+          </p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-blue-200">
+              Step {currentStep + 1} of {steps.length}
+            </span>
+            <span className="text-sm text-blue-200">
+              {Math.round(progress)}% Complete
+            </span>
+          </div>
+          <Progress value={progress} className="h-2" />
+        </div>
+
+        {/* Steps Indicator */}
+        <div className="flex items-center justify-between mb-8 px-4">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`flex flex-col items-center transition-all ${
+                index === currentStep
+                  ? "scale-110"
+                  : index < currentStep
+                  ? "opacity-60"
+                  : "opacity-30"
+              }`}
+            >
+              <div
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl mb-2 transition-all ${
+                  index < currentStep
+                    ? "bg-green-500/20 border-2 border-green-500"
+                    : index === currentStep
+                    ? "bg-blue-500/20 border-2 border-blue-500 animate-pulse"
+                    : "bg-slate-800 border-2 border-slate-700"
+                }`}
+              >
+                {index < currentStep ? (
+                  <Check className="w-6 h-6 text-green-400" />
+                ) : (
+                  <span>{step.icon}</span>
+                )}
+              </div>
+              <span className="text-xs text-white text-center hidden md:block max-w-[100px]">
+                {step.title}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Content Card */}
+        <Card className="bg-slate-900/50 border-blue-500/30 backdrop-blur-sm p-8 mb-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2">
+              {steps[currentStep].title}
+            </h2>
+            <p className="text-blue-200/60">{steps[currentStep].description}</p>
+          </div>
+
+          {/* Step Content */}
+          <div className="min-h-[400px]">
+            {currentStep === 0 && (
+              <DestinationStep
+                selected={destination}
+                onSelect={setDestination}
+              />
+            )}
+            {currentStep === 1 && (
+              <CrewStep
+                crewSize={crewSize}
+                duration={duration}
+                onCrewSizeChange={setCrewSize}
+                onDurationChange={setDuration}
+              />
+            )}
+            {currentStep === 2 && (
+              <VehicleStep
+                selected={launchVehicle}
+                onSelect={setLaunchVehicle}
+              />
+            )}
+            {currentStep === 3 && (
+              <HabitatStep
+                type={habitatType}
+                shape={habitatShape}
+                onTypeChange={setHabitatType}
+                onShapeChange={setHabitatShape}
+              />
+            )}
+            {currentStep === 4 && (
+              <DimensionsStep
+                shape={habitatShape}
+                vehicle={launchVehicle}
+                habitatType={habitatType}
+                dimensions={dimensions}
+                onDimensionsChange={setDimensions}
+              />
+            )}
+            {currentStep === 5 && (
+              <SummaryStep
+                destination={destination}
+                crewSize={crewSize}
+                duration={duration}
+                launchVehicle={launchVehicle}
+                habitatType={habitatType}
+                habitatShape={habitatShape}
+                dimensions={dimensions}
+              />
+            )}
+          </div>
+        </Card>
+
+        {/* Navigation Buttons */}
+        <div className="flex items-center justify-between gap-4">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentStep === 0}
+            className="border-blue-500/30 text-white hover:bg-blue-500/10"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+
+          <div className="flex gap-2">
+            {onSkip && currentStep === 0 && (
+              <Button
+                variant="ghost"
+                onClick={onSkip}
+                className="text-blue-300 hover:bg-blue-500/10"
+              >
+                Skip Configuration
+              </Button>
+            )}
+          </div>
+
+          <Button
+            onClick={handleNext}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {currentStep === steps.length - 1 ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Start Designing
+              </>
+            ) : (
+              <>
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Skip Link */}
+        {currentStep > 0 && onSkip && (
+          <div className="text-center mt-4">
+            <button
+              onClick={onSkip}
+              className="text-sm text-blue-300/60 hover:text-blue-300 transition-colors"
+            >
+              Skip and use default configuration
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/destination-step.tsx << 'EOF'
+"use client"
+
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/u
+/badge"
+import type { Destination } from "@/types"
+import { DESTINATIONS } from "@/lib/habitat/habitat-configs"
+import { Info } from "lucide-react"
+
+interface DestinationStepProps {
+  selected: Destination
+  onSelect: (destination: Destination) => void
+}
+
+export function DestinationStep({ selected, onSelect }: DestinationStepProps) {
+  const destinations: Array<{ id: Destination; data: typeof DESTINATIONS[Destination] }> = [
+    { id: "lunar-surface", data: DESTINATIONS["lunar-surface"] },
+    { id: "mars-surface", data: DESTINATIONS["mars-surface"] },
+    { id: "deep-space", data: DESTINATIONS["deep-space"] },
+    { id: "transit", data: DESTINATIONS["transit"] }
+  ]
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {destinations.map(({ id, data }) => (
+          <Card
+            key={id}
+            onClick={() => onSelect(id)}
+            className={`p-6 cursor-pointer transition-all hover:scale-105 ${
+              selected === id
+                ? "border-blue-500 border-2 bg-blue-500/10 shadow-lg shadow-blue-500/20"
+                : "border-slate-700 hover:border-blue-400/50 bg-slate-800/50"
+            }`}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">{data.icon}</span>
+                <div>
+                  <h3 className="text-xl font-bold text-white">{data.name}</h3>
+                  <p className="text-sm text-blue-200/60">Gravity: {data.gravity}g</p>
+                </div>
+              </div>
+              {selected === id && (
+                <Badge className="bg-blue-500">Selected</Badge>
+              )}
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-400 font-semibold">Radiation:</span>
+                <span className="text-white">{data.radiation}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-blue-400 font-semibold">Temperature:</span>
+                <span className="text-white">{data.temperature}</span>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-700">
+              <div className="flex items-start gap-2">
+                <Info className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  {data.considerations.map((consideration, index) => (
+                    <p key={index} className="text-xs text-blue-200/70">
+                      • {consideration}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Educational Info Box */}
+      <Card className="bg-blue-900/20 border-blue-500/30 p-4">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <h4 className="text-white font-semibold mb-2">NASA Artemis Program</h4>
+            <p className="text-sm text-blue-200/80">
+              NASA's Artemis program aims to return humans to the Moon and establish a sustainable presence there. 
+              The Moon will serve as a proving ground for technologies and operational approaches that will inform 
+              future human missions to Mars. Your habitat design will need to account for the unique challenges of 
+              each destination.
+            </p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/crew-step.tsx << 'EOF'
+"use client"
+
+import { Card } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Users, Calendar, Info, AlertTriangle } from "lucide-react"
+
+
+interface CrewStepProps {
+  crewSize: number
+  duration: number
+  onCrewSizeChange: (size: number) => void
+  onDurationChange: (days: number) => void
+}
+
+export function CrewStep({ crewSize, duration, onCrewSizeChange, onDurationChange }: CrewStepProps) {
+  const getVolumePerCrew = () => {
+    if (duration > 365) return 50
+    if (duration > 180) return 40
+    if (duration > 90) return 30
+    return 25
+  }
+
+  const recommendedVolume = crewSize * getVolumePerCrew()
+  
+  const getMissionType = () => {
+    if (duration <= 30) return { label: "Short Duration", color: "bg-green-500" }
+    if (duration <= 180) return { label: "Medium Duration", color: "bg-yellow-500" }
+    if (duration <= 365) return { label: "Long Duration", color: "bg-orange-500" }
+    return { label: "Extended Duration", color: "bg-red-500" }
+  }
+
+  const missionType = getMissionType()
+
+  return (
+    <div className="space-y-8">
+      {/* Crew Size Selector */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Users className="w-6 h-6 text-blue-400" />
+          <div>
+            <Label className="text-white text-lg font-semibold">Crew Size</Label>
+            <p className="text-sm text-blue-200/60">Number of crew members (1-6)</p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Slider
+              value={[crewSize]}
+              onValueChange={(value) => onCrewSizeChange(value[0])}
+              min={1}
+              max={6}
+              step={1}
+              className="flex-1"
+            />
+            <div className="w-20 text-center">
+              <span className="text-3xl font-bold text-white">{crewSize}</span>
+            </div>
+          </div>
+
+          {/* Crew Size Indicators */}
+          <div className="grid grid-cols-6 gap-2">
+            {[1, 2, 3, 4, 5, 6].map((size) => (
+              <button
+                key={size}
+                onClick={() => onCrewSizeChange(size)}
+                className={`h-12 rounded-lg flex items-center justify-center transition-all ${
+                  crewSize >= size
+                    ? "bg-blue-500 text-white"
+                    : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                }`}
+              >
+                👤
+              </button>
+            ))}
+          </div>
+
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
+            <p className="text-sm text-blue-200/80">
+              <strong>NASA Standard:</strong> Crew size affects required space for all functional areas. 
+              More crew members require proportionally larger living spaces, food storage, and exercise areas.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Mission Duration */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Calendar className="w-6 h-6 text-blue-400" />
+          <div>
+            <Label className="text-white text-lg font-semibold">Mission Duration</Label>
+            <p className="text-sm text-blue-200/60">Total days in space</p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Slider
+              value={[duration]}
+              onValueChange={(value) => onDurationChange(value[0])}
+              min={7}
+              max={730}
+              step={1}
+              className="flex-1"
+            />
+            <div className="w-32">
+              <Input
+                type="number"
+                value={duration}
+                onChange={(e) => onDurationChange(Number(e.target.value))}
+                min={7}
+                max={730}
+                className="bg-slate-700 border-slate-600 text-white text-center"
+              />
+            </div>
+          </div>
+
+          {/* Duration Display */}
+          <div className="flex items-center justify-between">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white">{duration}</p>
+              <p className="text-xs text-blue-200/60">Days</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white">{(duration / 30).toFixed(1)}</p>
+              <p className="text-xs text-blue-200/60">Months</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white">{(duration / 365).toFixed(2)}</p>
+              <p className="text-xs text-blue-200/60">Years</p>
+            </div>
+            <Badge className={`${missionType.color} text-white`}>
+              {missionType.label}
+            </Badge>
+          </div>
+
+          {/* Quick Presets */}
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: "1 Week", days: 7 },
+              { label: "1 Month", days: 30 },
+              { label: "6 Months", days: 180 },
+              { label: "1 Year", days: 365 }
+            ].map((preset) => (
+              <button
+                key={preset.days}
+                onClick={() => onDurationChange(preset.days)}
+                className="px-3 py-2 rounded-lg bg-slate-700 hover:bg-blue-600 text-white text-sm transition-colors"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Calculated Requirements */}
+      <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/30 p-6">
+        <div className="flex items-start gap-3 mb-4">
+          <Info className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
+          <div>
+            <h4 className="text-white font-semibold mb-2">Calculated Requirements</h4>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-blue-200/60">Recommended Total Volume:</p>
+                <p className="text-xl font-bold text-white">{recommendedVolume.toFixed(1)} m³</p>
+              </div>
+              <div>
+                <p className="text-blue-200/60">Volume per Crew Member:</p>
+                <p className="text-xl font-bold text-white">{getVolumePerCrew()} m³</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {duration > 365 && (
+          <div className="flex items-start gap-3 mt-4 pt-4 border-t border-blue-500/30">
+            <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-yellow-200/80">
+              <strong>Extended Mission:</strong> Missions over 1 year require significantly more space per crew member 
+              (50 m³) for psychological well-being and resource storage. Consider adding recreation and plant growth areas.
+            </p>
+          </div>
+        )}
+      </Card>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/vehicle-step.tsx << 'EOF'
+"use client"
+
+
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { LaunchVehicle } from "@/types"
+import { LAUNCH_VEHICLES } from "@/lib/habitat/habitat-configs"
+import { Rocket, Ruler, Weight } from "lucide-react"
+
+interface VehicleStepProps {
+  selected: LaunchVehicle
+  onSelect: (vehicle: LaunchVehicle) => void
+}
+
+export function VehicleStep({ selected, onSelect }: VehicleStepProps) {
+  const vehicles: LaunchVehicle[] = ["falcon-heavy", "sls", "starship", "custom"]
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {vehicles.map((vehicleId) => {
+          const vehicle = LAUNCH_VEHICLES[vehicleId]
+          return (
+            <Card
+              key={vehicleId}
+              onClick={() => onSelect(vehicleId)}
+              className={`p-6 cursor-pointer transition-all hover:scale-105 ${
+                selected === vehicleId
+                  ? "border-blue-500 border-2 bg-blue-500/10 shadow-lg shadow-blue-500/20"
+                  : "border-slate-700 hover:border-blue-400/50 bg-slate-800/50"
+              }`}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Rocket className="w-8 h-8 text-blue-400" />
+                  <div>
+                    <h3 className="text-lg font-bold text-white">{vehicle.name}</h3>
+                    {selected === vehicleId && (
+                      <Badge className="bg-blue-500 mt-1">Selected</Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-blue-200/70 mb-4">{vehicle.description}</p>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Ruler className="w-4 h-4 text-blue-400" />
+                  <div className="flex-1">
+                    <p className="text-xs text-blue-200/60">Payload Fairing</p>
+                    <p className="text-sm font-semibold text-white">
+                      {vehicle.maxDiameter}m × {vehicle.maxHeight}m
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Weight className="w-4 h-4 text-blue-400" />
+                  <div className="flex-1">
+                    <p className="text-xs text-blue-200/60">Max Payload to LEO</p>
+                    <p className="text-sm font-semibold text-white">
+                      {(vehicle.maxPayloadMass / 1000).toFixed(1)} tons
+                    </p>
+                  </div>
+                </div>
+
+                {/* Visual Size Indicator */}
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <p className="text-xs text-blue-200/60 mb-2">Relative Size</p>
+                  <div className="flex items-end gap-1 h-20">
+                    <div
+                      className={`bg-gradient-to-t from-blue-500 to-blue-400 rounded-t transition-all ${
+                        selected === vehicleId ? "opacity-100" : "opacity-40"
+                      }`}
+                      style={{
+                        width: `${(vehicle.maxDiameter / 10) * 100}%`,
+                        height: `${(vehicle.maxHeight / 30) * 100}%`
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Info Card */}
+      <Card className="bg-blue-900/20 border-blue-500/30 p-4">
+        <div className="text-sm text-blue-200/80">
+          <strong>Important:</strong> The launch vehicle determines the maximum dimensions of your habitat 
+          (for metallic types). Inflatable habitats can expand beyond fairing limits once deployed, while 
+          in-situ habitats are built on location and aren't constrained by launch vehicle size.
+        </div>
+      </Card>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/habitat-step.tsx << 'EOF'
+"use client"
+
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { HabitatType, HabitatShape } from "@/types"
+import { HABITAT_TYPES, HABITAT_SHAPE_TEMPLATES } from "@/lib/habitat/habitat-configs"
+import { Check, X } from "lucide-react"
+
+interface HabitatStepProps {
+  type: HabitatType
+  shape: HabitatShape
+  onTypeChange: (type: HabitatType) => void
+  onShapeChange: (shape: HabitatShape) => void
+}
+
+
+export function HabitatStep({ type, shape, onTypeChange, onShapeChange }: HabitatStepProps) {
+  const types: HabitatType[] = ["metallic", "inflatable", "in-situ"]
+  const shapes: HabitatShape[] = ["cylindrical", "spherical", "toroidal", "modular"]
+
+  return (
+    <div className="space-y-6">
+      {/* Habitat Type Selection */}
+      <div>
+        <h3 className="text-lg font-semibold text-white mb-4">Construction Type</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {types.map((typeId) => {
+            const typeData = HABITAT_TYPES[typeId]
+            return (
+              <Card
+                key={typeId}
+                onClick={() => onTypeChange(typeId)}
+                className={`p-5 cursor-pointer transition-all hover:scale-105 ${
+                  type === typeId
+                    ? "border-blue-500 border-2 bg-blue-500/10"
+                    : "border-slate-700 hover:border-blue-400/50 bg-slate-800/50"
+                }`}
+              >
+                <div className="text-center mb-3">
+                  <span className="text-4xl">{typeData.icon}</span>
+                  <h4 className="text-white font-bold mt-2">{typeData.name}</h4>
+                  {type === typeId && (
+                    <Badge className="bg-blue-500 mt-2">Selected</Badge>
+                  )}
+                </div>
+
+                <p className="text-xs text-blue-200/70 text-center mb-3">
+                  {typeData.description}
+                </p>
+
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-xs font-semibold text-green-400 mb-1">Advantages:</p>
+                    {typeData.advantages.slice(0, 2).map((adv, idx) => (
+                      <div key={idx} className="flex items-start gap-1">
+                        <Check className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-blue-200/80">{adv}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-red-400 mb-1">Disadvantages:</p>
+                    {typeData.disadvantages.slice(0, 2).map((dis, idx) => (
+                      <div key={idx} className="flex items-start gap-1">
+                        <X className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-blue-200/80">{dis}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Habitat Shape Selection */}
+      <div>
+        <h3 className="text-lg font-semibold text-white mb-4">Habitat Shape</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {shapes.map((shapeId) => {
+            const shapeData = HABITAT_SHAPE_TEMPLATES[shapeId]
+            return (
+              <Card
+                key={shapeId}
+                onClick={() => onShapeChange(shapeId)}
+                className={`p-5 cursor-pointer transition-all hover:scale-105 ${
+                  shape === shapeId
+                    ? "border-blue-500 border-2 bg-blue-500/10"
+                    : "border-slate-700 hover:border-blue-400/50 bg-slate-800/50"
+                }`}
+              >
+                <div className="text-center">
+                  <span className="text-5xl">{shapeData.icon}</span>
+                  <h4 className="text-white font-semibold mt-3 text-sm">
+                    {shapeData.name.split(" ")[0]}
+                  </h4>
+                  {shape === shapeId && (
+                    <Badge className="bg-blue-500 mt-2 text-xs">Selected</Badge>
+                  )}
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+
+        {/* Shape Details */}
+        <Card className="bg-slate-800/50 border-slate-700 p-5 mt-4">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">{HABITAT_SHAPE_TEMPLATES[shape].icon}</span>
+            <div className="flex-1">
+              <h4 className="text-white font-bold mb-1">
+                {HABITAT_SHAPE_TEMPLATES[shape].name}
+              </h4>
+              <p className="text-sm text-blue-200/70 mb-3">
+                {HABITAT_SHAPE_TEMPLATES[shape].description}
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-semibold text-green-400 mb-1">Advantages:</p>
+                  {HABITAT_SHAPE_TEMPLATES[shape].advantages.map((adv, idx) => (
+                    <div key={idx} className="flex items-start gap-1 mb-1">
+                      <Check className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-blue-200/80">{adv}</p>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-orange-400 mb-1">Challenges:</p>
+                  {HABITAT_SHAPE_TEMPLATES[shape].disadvantages.map((dis, idx) => (
+                    <div key={idx} className="flex items-start gap-1 mb-1">
+                      <X className="w-3 h-3 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-blue-200/80">{dis}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/dimensions-step.tsx << 'EOF'
+"use client"
+
+import { Card } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { AlertTriangle, CheckCircle, Info, Ruler } from "lucide-react"
+import type { HabitatShape, LaunchVehicle, HabitatType } from "@/types"
+import { LAUNCH_VEHICLES, calculateVolume, validateDimensions } from "@/lib/habitat/habitat-configs"
+
+
+interface DimensionsStepProps {
+  shape: HabitatShape
+  vehicle: LaunchVehicle
+  habitatType: HabitatType
+  dimensions: { width: number; height: number }
+  onDimensionsChange: (dimensions: { width: number; height: number }) => void
+}
+
+export function DimensionsStep({ 
+  shape, 
+  vehicle, 
+  habitatType,
+  dimensions, 
+  onDimensionsChange 
+}: DimensionsStepProps) {
+  const vehicleData = LAUNCH_VEHICLES[vehicle]
+  const volume = calculateVolume(shape, dimensions.width, dimensions.height)
+  const validation = validateDimensions(vehicle, habitatType, shape, dimensions.width, dimensions.height)
+
+  const isInflatableOrISRU = habitatType === "inflatable" || habitatType === "in-situ"
+
+  return (
+    <div className="space-y-6">
+      {/* Width Control */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Ruler className="w-6 h-6 text-blue-400" />
+          <div>
+            <Label className="text-white text-lg font-semibold">Habitat Width (Diameter)</Label>
+            <p className="text-sm text-blue-200/60">
+              {isInflatableOrISRU ? "Deployed width" : `Max: ${vehicleData.maxDiameter}m`}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Slider
+              value={[dimensions.width]}
+              onValueChange={(value) => onDimensionsChange({ ...dimensions, width: value[0] })}
+              min={2}
+              max={isInflatableOrISRU ? 15 : vehicleData.maxDiameter}
+              step={0.1}
+              className="flex-1"
+            />
+            <div className="w-32">
+              <Input
+                type="number"
+                value={dimensions.width}
+                onChange={(e) => onDimensionsChange({ ...dimensions, width: Number(e.target.value) })}
+                step={0.1}
+                className="bg-slate-700 border-slate-600 text-white text-center"
+              />
+            </div>
+            <span className="text-white font-semibold w-12">m</span>
+          </div>
+
+          {!isInflatableOrISRU && dimensions.width > vehicleData.maxDiameter && (
+            <div className="flex items-start gap-2 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-200">
+                Exceeds {vehicleData.name} fairing diameter ({vehicleData.maxDiameter}m)
+              </p>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Height Control */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Ruler className="w-6 h-6 text-blue-400 rotate-90" />
+          <div>
+            <Label className="text-white text-lg font-semibold">Habitat Height (Length)</Label>
+            <p className="text-sm text-blue-200/60">
+              {isInflatableOrISRU ? "Deployed height" : `Max: ${vehicleData.maxHeight}m`}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Slider
+              value={[dimensions.height]}
+              onValueChange={(value) => onDimensionsChange({ ...dimensions, height: value[0] })}
+              min={2}
+              max={isInflatableOrISRU ? 20 : vehicleData.maxHeight}
+              step={0.1}
+              className="flex-1"
+            />
+            <div className="w-32">
+              <Input
+                type="number"
+                value={dimensions.height}
+                onChange={(e) => onDimensionsChange({ ...dimensions, height: Number(e.target.value) })}
+                step={0.1}
+                className="bg-slate-700 border-slate-600 text-white text-center"
+              />
+            </div>
+            <span className="text-white font-semibold w-12">m</span>
+          </div>
+
+          {!isInflatableOrISRU && dimensions.height > vehicleData.maxHeight && (
+            <div className="flex items-start gap-2 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-200">
+                Exceeds {vehicleData.name} fairing height ({vehicleData.maxHeight}m)
+              </p>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Calculated Volume */}
+      <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/30 p-6">
+        <div className="flex items-start gap-3">
+          <Info className="w-6 h-6 text-blue-400 mt-1 flex-shrink-0" />
+          <div className="flex-1">
+            <h4 className="text-white font-semibold mb-4">Calculated Specifications</h4>
+            
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white">{dimensions.width.toFixed(1)}</p>
+                <p className="text-xs text-blue-200/60">Width (m)</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white">{dimensions.height.toFixed(1)}</p>
+                <p className="text-xs text-blue-200/60">Height (m)</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white">{volume.toFixed(1)}</p>
+                <p className="text-xs text-blue-200/60">Volume (m³)</p>
+              </div>
+            </div>
+
+            {/* Validation Status */}
+            {validation.valid ? (
+              <div className="flex items-center gap-2 bg-green-900/20 border border-green-500/30 rounded-lg p-3">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <p className="text-sm text-green-200">
+                  ✓ Dimensions are compatible with {vehicleData.name}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {validation.warnings.map((warning, idx) => (
+                  <div key={idx} className="flex items-start gap-2 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+                    <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-200">{warning}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {isInflatableOrISRU && (
+              <div className="flex items-start gap-2 bg-blue-900/20 border border-blue-500/30 rounded-lg p-3 mt-3">
+                <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-blue-200/80">
+                  {habitatType === "inflatable" 
+                    ? "Inflatable habitats can exceed launch vehicle constraints as they expand after deployment."
+                    : "In-situ habitats are constructed on location and are not limited by launch vehicle size."}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Quick Presets */}
+      <Card className="bg-slate-800/50 border-slate-700 p-5">
+        <h4 className="text-white font-semibold mb-3">Quick Presets</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button
+            onClick={() => onDimensionsChange({ width: 4.5, height: 10.0 })}
+            className="px-4 py-3 rounded-lg bg-slate-700 hover:bg-blue-600 text-white text-sm transition-colors"
+          >
+            <p className="font-semibold">Small</p>
+            <p className="text-xs text-blue-200/60">4.5m × 10m</p>
+          </button>
+          <button
+            onClick={() => onDimensionsChange({ width: 6.0, height: 12.0 })}
+            className="px-4 py-3 rounded-lg bg-slate-700 hover:bg-blue-600 text-white text-sm transition-colors"
+          >
+            <p className="font-semibold">Medium</p>
+            <p className="text-xs text-blue-200/60">6m × 12m</p>
+          </button>
+          <button
+            onClick={() => onDimensionsChange({ width: 8.0, height: 15.0 })}
+            className="px-4 py-3 rounded-lg bg-slate-700 hover:bg-blue-600 text-white text-sm transition-colors"
+          >
+            <p className="font-semibold">Large</p>
+            <p className="text-xs text-blue-200/60">8m × 15m</p>
+          </button>
+          <button
+            onClick={() => onDimensionsChange({ width: 10.0, height: 20.0 })}
+            className="px-4 py-3 rounded-lg bg-slate-700 hover:bg-blue-600 text-white text-sm transition-colors"
+          >
+            <p className="font-semibold">Extra Large</p>
+            <p className="text-xs text-blue-200/60">10m × 20m</p>
+          </button>
+        </div>
+      </Card>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/components/habitat/wizard/summary-step.tsx << 'EOF'
+"use client"
+
+
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { Destination, LaunchVehicle, HabitatType, HabitatShape } from "@/types"
+import { DESTINATIONS, LAUNCH_VEHICLES, HABITAT_TYPES, HABITAT_SHAPE_TEMPLATES, calculateVolume, getRecommendedCrewSize } from "@/lib/habitat/habitat-configs"
+import { CheckCircle, Users, Calendar, Rocket, Package, Ruler, Box } from "lucide-react"
+
+interface SummaryStepProps {
+  destination: Destination
+  crewSize: number
+  duration: number
+  launchVehicle: LaunchVehicle
+  habitatType: HabitatType
+  habitatShape: HabitatShape
+  dimensions: { width: number; height: number }
+}
+
+export function SummaryStep({
+  destination,
+  crewSize,
+  duration,
+  launchVehicle,
+  habitatType,
+  habitatShape,
+  dimensions
+}: SummaryStepProps) {
+  const destinationData = DESTINATIONS[destination]
+  const vehicleData = LAUNCH_VEHICLES[launchVehicle]
+  const typeData = HABITAT_TYPES[habitatType]
+  const shapeData = HABITAT_SHAPE_TEMPLATES[habitatShape]
+  const volume = calculateVolume(habitatShape, dimensions.width, dimensions.height)
+  const recommended = getRecommendedCrewSize(volume, duration)
+
+  return (
+    <div className="space-y-6">
+      {/* Success Message */}
+      <Card className="bg-gradient-to-r from-green-900/30 to-blue-900/30 border-green-500/30 p-6">
+        <div className="flex items-center gap-3">
+          <CheckCircle className="w-8 h-8 text-green-400" />
+          <div>
+            <h3 className="text-xl font-bold text-white">Configuration Complete!</h3>
+            <p className="text-green-200/80">Review your mission parameters below and start designing your habitat.</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Mission Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Destination Card */}
+        <Card className="bg-slate-800/50 border-slate-700 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-4xl">{destinationData.icon}</span>
+            <div>
+              <p className="text-sm text-blue-200/60">Destination</p>
+              <h4 className="text-xl font-bold text-white">{destinationData.name}</h4>
+            </div>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-blue-200/60">Gravity:</span>
+              <span className="text-white font-semibold">{destinationData.gravity}g</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-blue-200/60">Radiation:</span>
+              <span className="text-white font-semibold">{destinationData.radiation}</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Mission Parameters Card */}
+        <Card className="bg-slate-800/50 border-slate-700 p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-blue-400" />
+              <div>
+                <p className="text-sm text-blue-200/60">Crew Size</p>
+                <h4 className="text-2xl font-bold text-white">{crewSize} Members</h4>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Calendar className="w-6 h-6 text-blue-400" />
+              <div>
+                <p className="text-sm text-blue-200/60">Mission Duration</p>
+                <h4 className="text-2xl font-bold text-white">
+                  {duration} Days
+                  <span className="text-sm text-blue-200/60 ml-2">
+                    ({(duration / 30).toFixed(1)} months)
+                  </span>
+                </h4>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Habitat Configuration */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Habitat Configuration</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Launch Vehicle */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Rocket className="w-5 h-5 text-blue-400" />
+              <p className="text-sm font-semibold text-blue-200/60">Launch Vehicle</p>
+            </div>
+            <p className="text-white font-bold">{vehicleData.name}</p>
+            <p className="text-sm text-blue-200/70">
+              {vehicleData.maxDiameter}m × {vehicleData.maxHeight}m
+            </p>
+          </div>
+
+          {/* Habitat Type */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Package className="w-5 h-5 text-blue-400" />
+              <p className="text-sm font-semibold text-blue-200/60">Construction Type</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">{typeData.icon}</span>
+              <p className="text-white font-bold">{typeData.name}</p>
+            </div>
+          </div>
+
+          {/* Habitat Shape */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Box className="w-5 h-5 text-blue-400" />
+              <p className="text-sm font-semibold text-blue-200/60">Shape</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">{shapeData.icon}</span>
+              <p className="text-white font-bold">{shapeData.name}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Dimensions & Volume */}
+      <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/30 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Ruler className="w-6 h-6 text-blue-400" />
+          <h3 className="text-lg font-bold text-white">Physical Specifications</h3>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="text-center">
+            <p className="text-4xl font-bold text-white">{dimensions.width.toFixed(1)}</p>
+            <p className="text-sm text-blue-200/60">Width (m)</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold text-white">{dimensions.height.toFixed(1)}</p>
+            <p className="text-sm text-blue-200/60">Height (m)</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold text-white">{volume.toFixed(1)}</p>
+            <p className="text-sm text-blue-200/60">Total Volume (m³)</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold text-white">{(volume / crewSize).toFixed(1)}</p>
+            <p className="text-sm text-blue-200/60">Volume/Crew (m³)</p>
+          </div>
+        </div>
+
+        {/* Crew Size Recommendation */}
+        <div className="mt-6 pt-4 border-t border-blue-500/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-blue-200/60">NASA Recommended Crew Size for this Volume:</p>
+              <p className="text-xl font-bold text-white">
+                {recommended.recommended} crew members
+                <span className="text-sm text-blue-200/60 ml-2">
+                  (range: {recommended.min}-{recommended.max})
+                </span>
+              </p>
+            </div>
+            {crewSize >= recommended.min && crewSize <= recommended.max ? (
+              <Badge className="bg-green-500">✓ Optimal</Badge>
+            ) : crewSize < recommended.min ? (
+              <Badge className="bg-yellow-500">⚠ Spacious</Badge>
+            ) : (
+              <Badge className="bg-orange-500">⚠ Cramped</Badge>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Next Steps */}
+      <Card className="bg-slate-800/50 border-slate-700 p-6">
+        <h3 className="text-lg font-bold text-white mb-3">What's Next?</h3>
+        <div className="space-y-2 text-sm text-blue-200/80">
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <p>Design the interior layout with 13 functional areas (sleep, hygiene, food prep, etc.)</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <p>Place equipment and objects (spacesuits, furniture, storage)</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <p>Validate your design against NASA standards</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <p>Save and share your habitat design with the community</p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  )
+}
+EOF
+cat > /Users/apobook/Documents/Development/next/Beyond-Earth/app/habitat-designer/page.tsx << 'EOF'
+"use client"
+
+
+import { useState } from "react"
+import { MissionWizard } from "@/components/habitat/wizard/mission-wizard"
+import type { MissionConfig, HabitatConfig } from "@/types"
+
+export default function HabitatDesignerPage() {
+  const [showWizard, setShowWizard] = useState(true)
+  const [missionConfig, setMissionConfig] = useState<MissionConfig | null>(null)
+  const [habitatConfig, setHabitatConfig] = useState<HabitatConfig | null>(null)
+
+  const handleWizardComplete = (mission: MissionConfig, habitat: HabitatConfig) => {
+    setMissionConfig(mission)
+    setHabitatConfig(habitat)
+    setShowWizard(false)
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('currentMission', JSON.stringify(mission))
+    localStorage.setItem('currentHabitat', JSON.stringify(habitat))
+  }
+
+  const handleSkipWizard = () => {
+    // Use default configuration
+    const defaultMission: MissionConfig = {
+      crewSize: 4,
+      duration: 180,
+      destination: "lunar-surface",
+      launchVehicle: "sls"
+    }
+
+    const defaultHabitat: HabitatConfig = {
+      shape: "cylindrical",
+      type: "metallic",
+      dimensions: {
+        width: 4.5,
+        height: 10.0
+      },
+      volume: 159,
+      levels: 1
+    }
+
+    setMissionConfig(defaultMission)
+    setHabitatConfig(defaultHabitat)
+    setShowWizard(false)
+
+    localStorage.setItem('currentMission', JSON.stringify(defaultMission))
+    localStorage.setItem('currentHabitat', JSON.stringify(defaultHabitat))
+  }
+
+  if (showWizard) {
+    return <MissionWizard onComplete={handleWizardComplete} onSkip={handleSkipWizard} />
+  }
+
+  // TODO: Main designer interface will go here
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 flex items-center justify-center p-6">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-white mb-4">Habitat Designer</h1>
+        <p className="text-blue-200 mb-8">
+          Configuration complete! Main designer interface coming soon...
+        </p>
+        <div className="bg-slate-800/50 border border-blue-500/30 rounded-lg p-6 max-w-2xl">
+          <h2 className="text-2xl font-bold text-white mb-4">Your Configuration:</h2>
+          {missionConfig && habitatConfig && (
+            <div className="space-y-4 text-left">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-blue-200/60">Destination</p>
+                  <p className="text-white font-semibold capitalize">{missionConfig.destination.replace('-', ' ')}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Crew Size</p>
+                  <p className="text-white font-semibold">{missionConfig.crewSize} members</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Duration</p>
+                  <p className="text-white font-semibold">{missionConfig.duration} days</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Launch Vehicle</p>
+                  <p className="text-white font-semibold capitalize">{missionConfig.launchVehicle.replace('-', ' ')}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Habitat Type</p>
+                  <p className="text-white font-semibold capitalize">{habitatConfig.type}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Shape</p>
+                  <p className="text-white font-semibold capitalize">{habitatConfig.shape}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Dimensions</p>
+                  <p className="text-white font-semibold">
+                    {habitatConfig.dimensions.width}m × {habitatConfig.dimensions.height}m
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-200/60">Volume</p>
+                  <p className="text-white font-semibold">{habitatConfig.volume.toFixed(1)} m³</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={() => setShowWizard(true)}
+            className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            Reconfigure Mission
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+EOF

@@ -6,11 +6,18 @@ import { useEditableCanvas } from "@/hooks/use-editable-canvas"
 import { useScaledCanvas } from "@/hooks/use-scaled-canvas"
 import { PlacedItem } from "./placed-item"
 
+// Imágenes de fondo disponibles
+const backgroundImages = [
+  "/images/bg-1.png",
+  "/images/bg-2.png",
+  "/images/bg-3.png",
+]
+
 export function EditableCanvas() {
   const context = useContext(EditorContext)
   const { scale, viewportRef, contentRef, translateMouseCoordinates, nativeWidth, nativeHeight } = useScaledCanvas()
   const { handleDragOver, handleDrop } = useEditableCanvas({ translateMouseCoordinates })
-  
+
   if (!context) return null
 
   const { placedItems, clearSelection } = context
@@ -66,6 +73,10 @@ export function EditableCanvas() {
             position: 'absolute',
             top: 0,
             left: 0,
+            backgroundImage: `url(${backgroundImages[0]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
           }}
         >
           {sortedItems.map((item) => (

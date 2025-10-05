@@ -212,7 +212,7 @@ const MIN_SIZE = 50;
 const MAX_SIZE = 400;
 
 export function useEditorState() {
-  const [availableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
+  const [availableItems, setAvailableItems] = useState<ToolbarItemType[]>(INITIAL_ITEMS);
   const [placedItems, setPlacedItems] = useState<PlacedItemType[]>([]);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [isEditMode, setIsEditMode] = useState<boolean>(true);
@@ -419,6 +419,21 @@ export function useEditorState() {
     return status.every((req) => req.isMet);
   }, [getRequirementsStatus]);
 
+  const addCustomAsset = useCallback((name: string, imageDataUrl: string) => {
+    const timestamp = Date.now();
+    const newAsset: ToolbarItemType = {
+      id: `custom-${timestamp}`,
+      name: name,
+      shape: "image",
+      imagePath: imageDataUrl, // Using data URL directly
+      limit: 15,
+      minRequired: 0,
+      category: "miscellaneous"
+    };
+
+    setAvailableItems((prev) => [...prev, newAsset]);
+  }, []);
+
   return {
     availableItems,
     placedItems,
@@ -439,6 +454,7 @@ export function useEditorState() {
     bringForward,
     sendBackward,
     getRequirementsStatus,
-    areRequirementsMet
+    areRequirementsMet,
+    addCustomAsset
   };
 }

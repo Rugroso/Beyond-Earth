@@ -50,4 +50,5 @@ export interface EditorContextType {
   sendBackward: (instanceIds: string[]) => void;
   getRequirementsStatus: () => RequirementStatus[];
   areRequirementsMet: () => boolean;
+  addCustomAsset: (name: string, imageDataUrl: string) => void;
 }

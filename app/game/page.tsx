@@ -6,12 +6,15 @@ import { Toolbar } from "@/components/toolbar/toolbar"
 import { EditorContext } from "@/contexts/editor-context"
 import { Button } from "@/components/ui/button"
 import { EditControls } from "@/components/edit-controls"
-import { Edit3, Eye, Download, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Edit3, Eye, Download, Loader2, AlertCircle, CheckCircle2, Paintbrush } from "lucide-react"
 import { useCanvasCapture } from "@/hooks/use-canvas-capture"
 import { useToast } from "@/hooks/use-toast"
 import { Howl } from "howler"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { DrawingCanvas } from "@/components/drawing-canvas"
+import { useRouter } from "next/navigation"
 
 export default function GamePage() {
   const context = useContext(EditorContext)
@@ -20,6 +23,8 @@ export default function GamePage() {
   const [isExporting, setIsExporting] = useState(false)
   const [stars, setStars] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number }>>([])
   const backgroundMusicRef = useRef<Howl | null>(null)
+  const [isDrawingCanvasOpen, setIsDrawingCanvasOpen] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     // Generate random stars
@@ -170,6 +175,23 @@ export default function GamePage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Asset Creator Dialog */}
+            <Dialog open={isDrawingCanvasOpen} onOpenChange={setIsDrawingCanvasOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-purple-500/50 hover:bg-purple-950/30"
+                >
+                  <Paintbrush className="h-4 w-4" />
+                  Create Asset
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[95vw] p-0 bg-transparent border-0" showCloseButton={false}>
+                <DrawingCanvas onClose={() => setIsDrawingCanvasOpen(false)} />
+              </DialogContent>
+            </Dialog>
+
             {/* Edit Controls - Solo visible cuando hay selección */}
             <EditControls />
 
